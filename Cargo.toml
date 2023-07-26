@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 bevy = { version = "0.11.0", features = ["dynamic_linking"] }
+bevy_framepace = "0.13.3"
 rand = "0.8.5"
 
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
@@ -14,4 +15,4 @@ rand = "0.8.5"
 opt-level = 3
 # Enable a small amount of optimization in debug mode
 [profile.dev]
-opt-level = 1
+opt-level = 3
