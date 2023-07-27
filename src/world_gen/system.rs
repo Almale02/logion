@@ -1,4 +1,8 @@
+#![allow(unused_mut)]
+
 use std::sync::{Arc, Mutex};
+
+use bevy_rapier2d::prelude::*;
 
 use bevy::transform::commands;
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
@@ -23,7 +27,7 @@ pub fn gen_world_from_level_data(
 ) {
     let mut cmd = Arc::new(Mutex::new(commands));    
     
-        level_data.loop_block_grid(|x, y, block| {
+    level_data.loop_block_grid(|x, y, block| {
         let mut cmd = cmd.lock().unwrap();
         let global_pos = level_data.grid_to_global_space_unit(
             UVec2 {x: x as u32, y: y as u32}
@@ -36,18 +40,26 @@ pub fn gen_world_from_level_data(
         if *block == 1 {
             color = Color::rgb(0., 140. /255., 0.);
         }
-    
-        cmd.spawn(SpriteBundle {
-            sprite: Sprite {
-                color: color,
-                custom_size: Some(Vec2::new(16., 16.)),
+        println!("y: {}", global_pos.y *level_data.grid_unit as f32 - 500.);
+        cmd.spawn((
+            SpriteBundle {
+                sprite: Sprite {
+                    color,
+                    custom_size: Some(Vec2::new(16., 16.)),
+                    ..default()
+                },
+                transform: Transform::from_translation(Vec3::new(
+                    global_pos.x *level_data.grid_unit as f32,
+                    global_pos.y *level_data.grid_unit as f32 - 500.,
+                    0.)),
                 ..default()
+        },
+            RigidBody::Fixed,
+            Velocity {
+                linvel: Vec2::new(1.0, 5.0),
+                angvel: 0.4
             },
-            transform: Transform::from_translation(Vec3::new(
-                global_pos.x *level_data.grid_unit as f32,
-                global_pos.y *level_data.grid_unit as f32 - 500.,
-                0.)),
-            ..default()
-        });
+            Collider::cuboid(8., 8.),
+        ));
     })
 }
