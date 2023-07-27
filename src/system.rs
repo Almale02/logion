@@ -1,3 +1,4 @@
+use bevy_rapier2d::na::clamp;
 use bevy_rapier2d::prelude::*;
 
 use bevy::transform::commands;
@@ -29,19 +30,21 @@ pub fn move_camera(
 }
 
 pub fn move_ball(
-    mut q_controller: Query<&mut KinematicCharacterController, With<Ball>>,
+    mut q_movement: Query<(&mut Velocity, &mut KinematicCharacterController), With<Ball>>,
     keyboard: Res<Input<KeyCode>>,
     time: Res<Time>
 ) {
-    let mut vel = Vec2::ZERO;
-
-    if keyboard.pressed(KeyCode::Right) { vel.x = 1.4 * time.delta_seconds() * 100.}
-    if keyboard.pressed(KeyCode::Left) { vel.x = -1.4 * time.delta_seconds() * 100.}
-    if keyboard.just_pressed(KeyCode::Space) { vel.y = 70.5 }
     
-    vel.y -= 2.;
-    for mut controller in q_controller.iter_mut() {
-        controller.translation = Some(vel)
+    for (mut vel, mut controller) in q_movement.iter_mut() {
+        if keyboard.pressed(KeyCode::Right) { vel.linvel.x = 1.4 * time.delta_seconds() * 100.}
+        if keyboard.pressed(KeyCode::Left) { vel.linvel.x = -1.4 * time.delta_seconds() * 100.}
+        if keyboard.just_pressed(KeyCode::Space) { vel.linvel.y += 18. }
+        vel.linvel.y -= 1.;
+        if vel.linvel.y < -1. {vel.linvel.y = -1.}
+        if vel.linvel.x < 0. {vel.linvel += 0.1}
+        if vel.linvel.x > 0. {vel.linvel -= 0.1}
+
+        controller.translation = Some(vel.linvel)
     }
 }
 
@@ -53,6 +56,7 @@ pub fn spawn_ball(
         TransformBundle::from(Transform::from_xyz(0., 300., 0.)),
         Collider::ball(15.),
         KinematicCharacterController::default(),
-        GravityScale(2.5)
+        GravityScale(2.5),
+        Velocity::zero()
     ));
 }
