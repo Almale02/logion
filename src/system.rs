@@ -56,7 +56,10 @@ pub fn spawn_ball(
         TransformBundle::from(Transform::from_xyz(0., 300., 0.)),
         Collider::ball(15.),
         KinematicCharacterController::default(),
+<<<<<<< HEAD
         GravityScale(2.5),
         Velocity::zero()
+=======
+>>>>>>> 94e7404f3a81e36c9976a3800774dae64ca8393d
     ));
 }
