@@ -4,15 +4,17 @@ use bevy_framepace::{FramepaceSettings, Limiter};
 use bevy_rapier2d::prelude::*;
 
 pub mod component;
-pub mod resource;
+
 mod system;
 mod world_gen;
 
-use world_gen::system::{gen_world_from_level_data, generate_world};
+pub mod lib;
+pub mod resource;
 
-use component::*;
-use resource::*;
+use resource::block_texture::BlockTexture;
+use resource::level_data::LevelData;
 use system::*;
+use world_gen::system::{gen_world_from_level_data, generate_world};
 
 fn main() {
     App::new()
@@ -32,8 +34,9 @@ fn main() {
             bevy_framepace::FramepacePlugin,
         ))
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.))
-        .add_plugins(RapierDebugRenderPlugin::default())
+        //.add_plugins(RapierDebugRenderPlugin::default())
         .init_resource::<LevelData>()
+        .init_resource::<BlockTexture>()
         .add_systems(
             Startup,
             (

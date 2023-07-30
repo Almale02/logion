@@ -15,51 +15,68 @@ pub fn init_rendering(
 }
 
 pub fn move_camera(
-    keys: Res<Input<KeyCode>>,
-    mut q_camera: Query<&mut Transform, With<Camera2d>>,
-    time: Res<Time>
+    mut set: ParamSet<(
+        Query<&mut Transform, With<Camera2d>>,
+        Query<&Transform, With<Ball>>,
+    )>,
 ) {
-    if keys.pressed(KeyCode::A) {
-        q_camera.single_mut().translation.x -= 0.5 * time.delta_seconds() *1000.;
-        println!("{}", q_camera.single_mut().translation.x);
+    if set.p1().is_empty() {
+        return;
     }
-    if keys.pressed(KeyCode::D) {
-        q_camera.single_mut().translation.x += 0.5 * time.delta_seconds() *1000.;
-        println!("{}", q_camera.single_mut().translation.x);
-    }
+    set.p0().single_mut().translation.x = set.p1().single().translation.x; 
+    set.p0().single_mut().translation.y = set.p1().single().translation.y; 
 }
 
 pub fn move_ball(
-    mut q_movement: Query<(&mut Velocity, &mut KinematicCharacterController), With<Ball>>,
+    mut q_movement: Query<(&mut Velocity, &mut KinematicCharacterController, &KinematicCharacterControllerOutput), With<Ball>>,
+    mut q_transform: Query<&mut Transform, With<Ball>>,
     keyboard: Res<Input<KeyCode>>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
-    
-    for (mut vel, mut controller) in q_movement.iter_mut() {
-        if keyboard.pressed(KeyCode::Right) { vel.linvel.x = 1.4 * time.delta_seconds() * 100.}
-        if keyboard.pressed(KeyCode::Left) { vel.linvel.x = -1.4 * time.delta_seconds() * 100.}
-        if keyboard.just_pressed(KeyCode::Space) { vel.linvel.y += 18. }
-        vel.linvel.y -= 1.;
-        if vel.linvel.y < -1. {vel.linvel.y = -1.}
-        if vel.linvel.x < 0. {vel.linvel += 0.1}
-        if vel.linvel.x > 0. {vel.linvel -= 0.1}
+    let move_speed = 3.5;
+    let fall_speed = 2.5;
 
-        controller.translation = Some(vel.linvel)
+    for (mut y_vel, mut controller, controller_info) in q_movement.iter_mut() {
+        let mut x_vel = 0.;
+        if keyboard.pressed(KeyCode::Right) {x_vel = move_speed * time.delta_seconds() * 100.}
+        if keyboard.pressed(KeyCode::Left) {x_vel = -move_speed * time.delta_seconds() * 100.}
+
+        if controller_info.grounded {
+            if keyboard.just_pressed(KeyCode::Space) { y_vel.linvel.y += 18. * (fall_speed / 2.)}
+        }
+
+        y_vel.linvel.y -= fall_speed;
+        if y_vel.linvel.y < -fall_speed {y_vel.linvel.y = -fall_speed}
+
+        controller.translation = Some(Vect {x: x_vel, y: y_vel.linvel.y});
+        
+        for mut transform in q_transform.iter_mut() {
+            transform.rotate_z(x_vel);
+        }
     }
 }
 
 pub fn spawn_ball(
-    mut commands: Commands
+    mut commands: Commands,
+    asset_server: Res<AssetServer>
+    
 ) {
     commands.spawn((
         Ball,
-        TransformBundle::from(Transform::from_xyz(0., 300., 0.)),
-        Collider::ball(15.),
+        SpriteBundle {
+            texture: asset_server.load("player.png"),
+            transform: Transform::from_scale(
+                Vec3 {x: 2., y: 2., z: 0.}
+            ).with_translation(
+                Vec3 {x: 0., y: 360., z: 0.}
+            ),
+            ..default()
+        },
+
+        //TransformBundle::from(Transform::from_xyz(0., 300., 0.)),
+        Collider::ball(16. /2. * 2./3.),
         KinematicCharacterController::default(),
-<<<<<<< HEAD
-        GravityScale(2.5),
+        KinematicCharacterControllerOutput::default(),
         Velocity::zero()
-=======
->>>>>>> 94e7404f3a81e36c9976a3800774dae64ca8393d
     ));
 }
