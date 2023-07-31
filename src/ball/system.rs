@@ -32,12 +32,6 @@ pub fn move_ball(
         
         
         set.p1().single_mut().rotate_z(x_vel);            
-
-        //println!("{}", 1. /time.delta_seconds());
-
-        // move camera
-        /*set.p0().single_mut().translation.x = set.p1().single().translation.x; 
-        set.p0().single_mut().translation.y = set.p1().single().translation.y;*/
     }
 }
 

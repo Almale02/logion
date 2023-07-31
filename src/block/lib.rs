@@ -2,9 +2,9 @@ use bevy::prelude::*;
 
 use crate::lib::Identifier::{Identifiable, Identifier};
 
-// INFO: BLOCK_STATE // easier to find then in this way
+// SECTION: BLOCK_STATE
 pub struct BlockState {
-    pub state_image: Handle<Image>,
+    pub state_image: String,
     pub state_id: Identifier<BlockState>,
 }
 impl Identifiable for BlockState {
@@ -13,10 +13,11 @@ impl Identifiable for BlockState {
     }
 }
 
-// INFO: BLOCK
+// SECTION: BLOCK
 pub struct Block {
     pub state_list: Vec<BlockState>,
-    pub default_state: Identifier<Block>,
+    pub default_state: Identifier<BlockState>,
+    pub block_id: Identifier<Block>,
 }
 impl Identifiable for Block {
     fn id_prefix() -> String {

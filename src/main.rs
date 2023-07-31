@@ -3,11 +3,11 @@ use bevy_framepace::{FramepaceSettings, Limiter};
 
 use bevy_rapier2d::prelude::*;
 
-// INFO: root_file
+// SECTION: root_file
 mod component;
 mod system;
 
-// INFO: FOLDER
+// SECTION: FOLDER
 mod ball;
 mod block;
 mod lib;
@@ -24,6 +24,8 @@ use world_load::system::load_world;
 // TODO: asdaasd LEVES
 // WARN: leveses TÁL
 // INFO: lila
+// SECTION: reddy baddy lali
+
 fn main() {
     App::new()
         .add_plugins((
