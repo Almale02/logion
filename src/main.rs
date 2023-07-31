@@ -2,12 +2,14 @@ use bevy::prelude::*;
 use bevy_framepace::{FramepaceSettings, Limiter};
 
 use bevy_rapier2d::prelude::*;
+
 // INFO: root_file
 mod component;
 mod system;
 
 // INFO: FOLDER
 mod ball;
+mod block;
 mod lib;
 mod resource;
 mod world_gen;

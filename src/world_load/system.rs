@@ -13,11 +13,11 @@ use crate::resource::{
 
 pub fn load_world(
     mut commands: Commands,
-    mut level_data: ResMut<LevelData>, 
+    level_data: ResMut<LevelData>, 
     asset_server: Res<AssetServer>,
     block_texture: Res<BlockTexture>,
 ) {
-    let mut cmd = Arc::new(Mutex::new(commands));
+    let cmd = Arc::new(Mutex::new(commands));
     
     level_data.loop_block_grid(|x, y, block, _| {
         let mut cmd = cmd.lock().unwrap();
@@ -42,11 +42,6 @@ pub fn load_world(
                 ..default()
             },
             RigidBody::Fixed,
-            Velocity {
-                linvel: Vec2::new(1.0, 5.0),
-                angvel: 0.4
-            },
             Collider::cuboid(8., 8.),
         ));
-    })
-}
+    })}

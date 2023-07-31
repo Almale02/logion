@@ -1,13 +1,15 @@
 use std::path::{Path, PathBuf};
 
+use crate::block::lib::Block;
 use crate::lib::USVec2::*;
+
 use bevy::{asset::Asset, prelude::*, utils::HashMap};
 
 #[derive(Resource)]
 pub struct LevelData {
     pub grid_unit: u8,
     pub world_size: USVec2,
-    pub block_gird: Vec<Vec<u8>>,
+    pub block_gird: Vec<Vec<Block>>,
 }
 
 impl Default for LevelData {
