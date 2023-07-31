@@ -39,8 +39,8 @@ fn main() {
                 .build(),
             bevy_framepace::FramepacePlugin,
         ))
-        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(16.))
-        .add_plugins(RapierDebugRenderPlugin::default())
+        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.))
+        //.add_plugins(RapierDebugRenderPlugin::default())
         .init_resource::<LevelData>()
         .init_resource::<BlockTexture>()
         .add_systems(
@@ -54,7 +54,7 @@ fn main() {
             )
                 .chain(),
         )
-        .add_systems(Update, (move_camera, move_ball))
+        .add_systems(Update, (move_ball, move_camera).chain())
         .run();
 }
 fn frame_rate(mut rate: ResMut<FramepaceSettings>) {
