@@ -14,5 +14,7 @@ pub trait Block {
 // SECTION: BLOCK_STATEABLE
 pub trait BlockStateable {
     fn states() -> HashMap<Identifier, BlockState>;
-    fn current_state() -> Identifier;
+    fn state(&self) -> Identifier;
+    fn set_state(&mut self, value: Identifier);
+
 }

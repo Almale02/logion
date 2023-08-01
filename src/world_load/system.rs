@@ -31,9 +31,9 @@ pub fn load_world(
         );
         match *block {
             BlockType::Air(a) => {
-                //do stuff
+                return;
             },
-            _ => ()
+            _ => ()     
         }
 
         let texture = block_texture.texture_map.get(block);

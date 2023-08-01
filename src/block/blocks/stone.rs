@@ -3,7 +3,9 @@ use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
 
 #[derive(Clone)]
-pub struct StoneBlock {}
+pub struct StoneBlock {
+    current_state: Identifier
+}
 
 impl Block for StoneBlock {
     fn block_id() -> Identifier {
@@ -19,8 +21,11 @@ impl BlockStateable for StoneBlock {
 
         out
     }
-    fn current_state() -> Identifier {
-        Identifier {id: "blockstate:{stone:stone}".to_string()}
+    fn value(&self) -> Identifier {
+        self.current_state
+    }
+    fn set_value(&mut self, value: Identifier) {
+        self.current_state = value
     }
 }
 
