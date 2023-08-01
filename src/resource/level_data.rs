@@ -1,11 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use crate::block::{
-    lib::Block,
-    block_type::BlockType,
-    blocks::air::AirBlock,
-};
-
+use crate::block::{block_type::BlockType, blocks::air::AirBlock, lib::Block};
 
 use crate::lib::USVec2::*;
 
@@ -23,7 +18,7 @@ impl Default for LevelData {
         LevelData {
             grid_unit: 32,
             world_size: USVec2 { x: 90, y: 30 },
-            block_gird: vec![vec![BlockType::Air(AirBlock {}); 90]; 30],
+            block_gird: vec![vec![BlockType::Air(AirBlock::default()); 90]; 30],
         }
     }
 }

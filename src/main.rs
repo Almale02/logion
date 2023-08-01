@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy_framepace::{FramepaceSettings, Limiter};
-
 use bevy_rapier2d::prelude::*;
 
 // SECTION: root_file

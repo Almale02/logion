@@ -27,11 +27,11 @@ pub fn generate_world(
     for (y, row) in level_data.block_gird.iter().enumerate() {
         for (x, block) in row.iter().enumerate() {            
             if y > LevelData::change_y_smallest(world_size, 10) {
-                grid[y][x] = BlockType::Dirt(dirt::DirtBlock {});
+                grid[y][x] = BlockType::Dirt(dirt::DirtBlock::default()) 
             }
 
             if y >= LevelData::change_y_smallest(world_size, 3) {
-                grid[y][x] = BlockType::Stone(stone::StoneBlock {});
+                grid[y][x] = BlockType::Stone(stone::StoneBlock::default());
             }
         }
     }

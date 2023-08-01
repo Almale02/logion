@@ -22,28 +22,30 @@ pub fn load_world(
     asset_server: Res<AssetServer>,
     block_texture: Res<BlockTexture>,
 ) {
-    let cmd = Arc::new(Mutex::new(commands));
+    let cmd = Mutex::new(commands);
     
     level_data.loop_block_grid(|x, y, block, _| {
         let mut cmd = cmd.lock().unwrap();
         let global_pos = level_data.grid_to_global_space_unit(
             USVec2 {x, y}
         );
-        match *block {
-            BlockType::Air(a) => {
-                return;
-            },
-            _ => ()     
+        match block {
+            BlockType::Air(_) => {
+                return
+            }
+            _ => ()
         }
 
-        let texture = block_texture.texture_map.get(block);
+        let states = block.as_block().states();
+        let texture = states.get(&block.as_block().state()).unwrap();
+        
         cmd.spawn((
             SpriteBundle {
-                texture: asset_server.load(texture.unwrap()),
+                texture: asset_server.load(&texture.state_image),
                 transform: Transform::from_translation(
                     Vec3::new(
                         global_pos.x as f32 *level_data.grid_unit as f32,
-                        global_pos.y as f32*level_data.grid_unit as f32,
+                        global_pos.y as f32 *level_data.grid_unit as f32,
                         0.
                     )
                 ).with_scale(
