@@ -1,6 +1,12 @@
 use std::path::{Path, PathBuf};
 
-use crate::block::lib::Block;
+use crate::block::{
+    lib::Block,
+    block_type::BlockType,
+    blocks::air::AirBlock,
+};
+
+
 use crate::lib::USVec2::*;
 
 use bevy::{asset::Asset, prelude::*, utils::HashMap};
@@ -9,7 +15,7 @@ use bevy::{asset::Asset, prelude::*, utils::HashMap};
 pub struct LevelData {
     pub grid_unit: u8,
     pub world_size: USVec2,
-    pub block_gird: Vec<Vec<Block>>,
+    pub block_gird: Vec<Vec<BlockType>>,
 }
 
 impl Default for LevelData {
@@ -17,7 +23,7 @@ impl Default for LevelData {
         LevelData {
             grid_unit: 32,
             world_size: USVec2 { x: 90, y: 30 },
-            block_gird: vec![vec![0; 90]; 30],
+            block_gird: vec![vec![BlockType::Air(AirBlock {}); 90]; 30],
         }
     }
 }
@@ -37,7 +43,7 @@ impl LevelData {
 
     pub fn loop_block_grid<T>(&self, func: T)
     where
-        T: Fn(usize, usize, &u8, &Vec<Vec<u8>>),
+        T: Fn(usize, usize, &BlockType, &Vec<Vec<BlockType>>),
     {
         for (y, row) in self.block_gird.iter().enumerate() {
             for (x, block) in row.iter().enumerate() {

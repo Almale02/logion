@@ -4,12 +4,17 @@ use bevy::prelude::*;
 
 use bevy_rapier2d::prelude::*;
 
+use crate::block::blocks::air::AirBlock;
 use crate::lib::USVec2::USVec2;
 use crate::resource::{
     level_data::LevelData,
     block_texture::BlockTexture
 };
-
+use crate::block::{
+    lib::*,
+    block_type::*,
+    blocks::*
+};
 
 pub fn load_world(
     mut commands: Commands,
@@ -24,7 +29,12 @@ pub fn load_world(
         let global_pos = level_data.grid_to_global_space_unit(
             USVec2 {x, y}
         );
-        if *block == 0 {return}
+        match *block {
+            BlockType::Air(a) => {
+                //do stuff
+            },
+            _ => ()
+        }
 
         let texture = block_texture.texture_map.get(block);
         cmd.spawn((

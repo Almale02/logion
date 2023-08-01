@@ -1,26 +1,18 @@
 use bevy::prelude::*;
 
-use crate::lib::Identifier::{Identifiable, Identifier};
+use std::collections::HashMap;
+use crate::lib::Identifier::{Identifier};
 
 // SECTION: BLOCK_STATE
 pub struct BlockState {
     pub state_image: String,
-    pub state_id: Identifier<BlockState>,
 }
-impl Identifiable for BlockState {
-    fn id_prefix() -> String {
-        String::from("block_state:")
-    }
-}
-
 // SECTION: BLOCK
-pub struct Block {
-    pub state_list: Vec<BlockState>,
-    pub default_state: Identifier<BlockState>,
-    pub block_id: Identifier<Block>,
+pub trait Block {
+    fn block_id() -> Identifier;
 }
-impl Identifiable for Block {
-    fn id_prefix() -> String {
-        String::from("block:")
-    }
+// SECTION: BLOCK_STATEABLE
+pub trait BlockStateable {
+    fn states() -> HashMap<Identifier, BlockState>;
+    fn current_state() -> Identifier;
 }
