@@ -9,7 +9,7 @@ pub struct DirtBlock {
 }
 impl DirtBlock {
     pub fn make_grassy(&mut self) {
-        self.current_state = Identifier {id: "blockstate:{grass:dirt_grass_t}".to_string()}
+        self.current_state = Identifier {id: "blockstate:{dirt:dirt_grass_t}".to_string()}
     }
 }
 
