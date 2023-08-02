@@ -25,8 +25,8 @@ pub fn generate_world(
     let mut grid = level_data.block_gird.clone();
 
     for (y, row) in level_data.block_gird.iter().enumerate() {
-        for (x, block) in row.iter().enumerate() {            
-            if y > LevelData::change_y_smallest(world_size, 10) {
+        for (x, block) in row.iter().enumerate() {                                    
+            if y >= LevelData::change_y_smallest(world_size, 10) {
                 grid[y][x] = BlockType::Dirt(dirt::DirtBlock::default()) 
             }
 
@@ -37,4 +37,25 @@ pub fn generate_world(
     }
 
     level_data.block_gird = grid;
+}
+pub fn generate_grass(
+    mut level_data: ResMut<LevelData>,
+) {
+    let world_size: usize = level_data.world_size.y.try_into().unwrap();
+    
+    let mut grid = level_data.block_gird.clone();
+    
+
+    for (y, row) in level_data.block_gird.iter_mut().enumerate() {
+        for (x, block) in row.iter_mut().enumerate() {
+            if y == LevelData::change_y_smallest(world_size, 10) {
+                match block {
+                    BlockType::Dirt(x) => {
+                        x.make_grassy()
+                    },
+                    _ => ()
+                }
+            }
+        }
+    }
 }

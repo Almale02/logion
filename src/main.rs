@@ -17,7 +17,7 @@ mod world_load;
 use ball::system::*;
 use resource::{block_texture::BlockTexture, level_data::LevelData};
 use system::*;
-use world_gen::system::generate_world;
+use world_gen::system::*;
 use world_load::system::load_world;
 
 // TODO: asdaasd LEVES
@@ -52,6 +52,7 @@ fn main() {
                 frame_rate,
                 init_rendering,
                 generate_world,
+                generate_grass,
                 load_world,
                 spawn_ball,
             )

@@ -37,6 +37,7 @@ pub fn load_world(
         }
 
         let states = block.as_block().states();
+        println!("{:#?}", states);  
         let texture = states.get(&block.as_block().state()).unwrap();
         
         cmd.spawn((
