@@ -5,11 +5,30 @@ use std::collections::HashMap;
 #[derive(Clone)]
 pub struct DirtBlock {
     current_state: Identifier,
-    grass_facings: [GrassFacing; 4]
+    grass_facings: [GrassFacing; 4],
 }
 impl DirtBlock {
-    pub fn make_grassy(&mut self) {
-        self.current_state = Identifier {id: "blockstate:{dirt:dirt_grass_t}".to_string()}
+    pub fn make_grassy(&mut self, left: bool, right: bool, top: bool) {
+        if top && !left && !right {
+            self.current_state = Identifier {
+                id: "blockstate:{dirt:dirt_grass_t}".to_string(),
+            }
+        }
+        if top && left && !right {
+            self.current_state = Identifier {
+                id: "blockstate:{dirt:dirt_grass_tl}".to_string(),
+            }
+        }
+        if top && !left && right {
+            self.current_state = Identifier {
+                id: "blockstate:{dirt:dirt_grass_tr}".to_string(),
+            }
+        }
+        if top && left && right {
+            self.current_state = Identifier {
+                id: "blockstate:{dirt:dirt_grass_tlr}".to_string(),
+            }
+        }
     }
 }
 
@@ -27,7 +46,7 @@ impl Block for DirtBlock {
         add_grass_state(&mut out, "dirt", "dirt_grass_tl", &self.grass_facings[1]);
         add_grass_state(&mut out, "dirt", "dirt_grass_tr", &self.grass_facings[2]);
         add_grass_state(&mut out, "dirt", "dirt_grass_tlr", &self.grass_facings[3]);
-                
+
         out
     }
     fn state(&self) -> &Identifier {
@@ -49,7 +68,7 @@ impl Default for DirtBlock {
                 GrassFacing::TopLeft("dirt/grass_state/dirt_grass_tl.png".to_string()),
                 GrassFacing::TopRight("dirt/grass_state/dirt_grass_tr.png".to_string()),
                 GrassFacing::TopLeftRight("dirt/grass_state/dirt_grass_tlr.png".to_string()),
-            ]
+            ],
         }
     }
 }

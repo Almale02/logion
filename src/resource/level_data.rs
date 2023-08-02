@@ -27,13 +27,13 @@ impl LevelData {
     pub fn grid_to_global_space_unit(&self, grid_pos: USVec2) -> USVec2 {
         USVec2 {
             x: grid_pos.x,
-            y: LevelData::change_y_smallest(self.world_size.y, grid_pos.y),
+            y: self.change_y_smallest(grid_pos.y),
         }
     }
 
     // changes between Bottom Smalles Y positioning and Top Smalles Y positioning
-    pub fn change_y_smallest(world_size: usize, y: usize) -> usize {
-        return world_size - y;
+    pub fn change_y_smallest(&self, y: usize) -> usize {
+        return self.world_size.y - y;
     }
 
     pub fn loop_block_grid<T>(&self, func: T)
