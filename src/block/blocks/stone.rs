@@ -1,8 +1,10 @@
+use bevy::prelude::Component;
+
 use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
 use std::collections::HashMap;
 
-#[derive(Clone)]
+#[derive(Clone, Copy, Component)]
 pub struct StoneBlock {
     current_state: Identifier,
 }

@@ -23,6 +23,11 @@ pub enum GrassFacing {
     TopRight(String),
     TopLeftRight(String),
 }
+// SECTION: BLOCK_RENDER_TYPE
+pub enum BlockRenderType {
+    BlockState(String),
+    Generated(Handle<Image>)
+}
 // SECTON: HELPER_FN
 pub fn add_block_state(
     map: &mut HashMap<Identifier, BlockState>,

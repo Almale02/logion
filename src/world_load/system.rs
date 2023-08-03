@@ -5,6 +5,7 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use crate::block::blocks::air::AirBlock;
+use crate::block::blocks::stone::StoneBlock;
 use crate::block::{block_type::*, blocks::*, lib::*};
 use crate::lib::USVec2::USVec2;
 use crate::resource::{block_texture::BlockTexture, level_data::LevelData};
@@ -28,7 +29,7 @@ pub fn load_world(
         let states = block.as_block().states();
         let texture = states.get(&block.as_block().state()).unwrap();
 
-        cmd.spawn((
+        let mut entity = cmd.spawn((
             SpriteBundle {
                 texture: asset_server.load(&texture.state_image),
                 transform: Transform::from_translation(Vec3::new(
@@ -46,5 +47,11 @@ pub fn load_world(
             RigidBody::Fixed,
             Collider::cuboid(8., 8.),
         ));
+
+        match block {
+            BlockType::Dirt(x) => entity.insert(*x),
+            BlockType::Stone(x) => entity.insert(*x),
+            _ => unreachable!()
+        };
     })
 }
