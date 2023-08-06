@@ -1,57 +1,64 @@
-use std::sync::{Arc, Mutex};
-
 use bevy::prelude::*;
 
 use bevy_rapier2d::prelude::*;
 
-use crate::block::blocks::air::AirBlock;
-use crate::block::blocks::stone::StoneBlock;
 use crate::block::{block_type::*, blocks::*, lib::*};
+use crate::lib::Identifier::Identifier;
 use crate::lib::USVec2::USVec2;
-use crate::resource::{block_texture::BlockTexture, level_data::LevelData};
+use crate::resource::level_data::LevelData;
 
 pub fn load_world(
     mut commands: Commands,
-    level_data: ResMut<LevelData>,
+    mut level_data: ResMut<LevelData>,
     asset_server: Res<AssetServer>,
-    block_texture: Res<BlockTexture>,
 ) {
-    let cmd = Mutex::new(commands);
+    let mut block_grid = level_data.block_gird.clone();
 
-    level_data.loop_block_grid(|x, y, block, _| {
-        let mut cmd = cmd.lock().unwrap();
-        let global_pos = level_data.grid_to_global_space_unit(USVec2 { x, y });
-        match block {
-            BlockType::Air(_) => return,
-            _ => (),
+    for (y, row) in level_data.gen_grid.iter().enumerate() {
+        for (x, block) in row.iter().enumerate() {
+            let global_pos = level_data.grid_to_global_space_unit(USVec2 { x, y });
+
+            let handle: Handle<Image> = match block.as_block().render_type() {
+                BlockRenderType::None() => continue,
+                BlockRenderType::BlockState(x) => asset_server.load(
+                    block
+                        .as_block()
+                        .states()
+                        .get(&Identifier { id: x.to_string() })
+                        .unwrap()
+                        .state_image
+                        .clone(),
+                ),
+                BlockRenderType::Generated(x) => x.clone(),
+            };
+
+            let mut entity = commands.spawn((
+                SpriteBundle {
+                    texture: handle,
+                    transform: Transform::from_translation(Vec3::new(
+                        global_pos.x as f32 * level_data.grid_unit as f32,
+                        global_pos.y as f32 * level_data.grid_unit as f32,
+                        0.,
+                    ))
+                    .with_scale(Vec3 {
+                        x: 2.,
+                        y: 2.,
+                        z: 0.,
+                    }),
+                    ..default()
+                },
+                RigidBody::Fixed,
+                Collider::cuboid(8., 8.),
+            ));
+
+            match block {
+                BlockType::Dirt(x) => entity.insert(x.clone()),
+                BlockType::Stone(x) => entity.insert(x.clone()),
+                _ => unreachable!(),
+            };
+
+            block_grid[y][x] = entity.id();
         }
-
-        let states = block.as_block().states();
-        let texture = states.get(&block.as_block().state()).unwrap();
-
-        let mut entity = cmd.spawn((
-            SpriteBundle {
-                texture: asset_server.load(&texture.state_image),
-                transform: Transform::from_translation(Vec3::new(
-                    global_pos.x as f32 * level_data.grid_unit as f32,
-                    global_pos.y as f32 * level_data.grid_unit as f32,
-                    0.,
-                ))
-                .with_scale(Vec3 {
-                    x: 2.,
-                    y: 2.,
-                    z: 0.,
-                }),
-                ..default()
-            },
-            RigidBody::Fixed,
-            Collider::cuboid(8., 8.),
-        ));
-
-        match block {
-            BlockType::Dirt(x) => entity.insert(*x),
-            BlockType::Stone(x) => entity.insert(*x),
-            _ => unreachable!()
-        };
-    })
+    }
+    level_data.block_gird = block_grid;
 }

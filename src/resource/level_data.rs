@@ -4,13 +4,15 @@ use crate::block::{block_type::BlockType, blocks::air::AirBlock, lib::Block};
 
 use crate::lib::USVec2::*;
 
+use bevy::reflect::Array;
 use bevy::{asset::Asset, prelude::*, utils::HashMap};
 
 #[derive(Resource)]
 pub struct LevelData {
     pub grid_unit: u8,
     pub world_size: USVec2,
-    pub block_gird: Vec<Vec<BlockType>>,
+    pub block_gird: [[Entity; 90]; 30],
+    pub gen_grid: Vec<Vec<BlockType>>,
 }
 
 impl Default for LevelData {
@@ -18,7 +20,8 @@ impl Default for LevelData {
         LevelData {
             grid_unit: 32,
             world_size: USVec2 { x: 90, y: 30 },
-            block_gird: vec![vec![BlockType::Air(AirBlock::default()); 90]; 30],
+            gen_grid: vec![vec![BlockType::Air(AirBlock::default()); 90]; 30],
+            block_gird: [[Entity::PLACEHOLDER; 90]; 30],
         }
     }
 }
@@ -34,16 +37,5 @@ impl LevelData {
     // changes between Bottom Smalles Y positioning and Top Smalles Y positioning
     pub fn change_y_smallest(&self, y: usize) -> usize {
         return self.world_size.y - y;
-    }
-
-    pub fn loop_block_grid<T>(&self, func: T)
-    where
-        T: Fn(usize, usize, &BlockType, &Vec<Vec<BlockType>>),
-    {
-        for (y, row) in self.block_gird.iter().enumerate() {
-            for (x, block) in row.iter().enumerate() {
-                func(x, y, block, &self.block_gird)
-            }
-        }
     }
 }

@@ -2,10 +2,11 @@ use std::collections::HashMap;
 
 use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
+use crate::material::lib::MaterialType;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AirBlock {
-    current_state: Identifier,
+    render_type: BlockRenderType,
 }
 impl Block for AirBlock {
     fn block_id(&self) -> Identifier {
@@ -14,32 +15,25 @@ impl Block for AirBlock {
         }
     }
     fn states(&self) -> HashMap<Identifier, BlockState> {
-        let mut out = HashMap::default();
-
-        out.insert(
-            Identifier {
-                id: "air".to_string(),
-            },
-            BlockState {
-                state_image: "air".to_string(),
-            },
-        );
-
-        out
+        unreachable!()
     }
-    fn state(&self) -> &Identifier {
-        &self.current_state
+    fn render_type(&self) -> &BlockRenderType {
+        &self.render_type
     }
-    fn set_state(&mut self, value: Identifier) {
-        self.current_state = value
+    fn set_rendertype(&mut self, value: BlockRenderType) {
+        unreachable!()
+    }
+    fn get_materials(&self) -> &HashMap<MaterialType, u8> {
+        unreachable!()
+    }
+    fn gen_materials(&mut self, x: usize, y: usize) -> &HashMap<MaterialType, u8> {
+        unreachable!()
     }
 }
 impl Default for AirBlock {
     fn default() -> Self {
         AirBlock {
-            current_state: Identifier {
-                id: "air".to_string(),
-            },
+            render_type: BlockRenderType::None(),
         }
     }
 }

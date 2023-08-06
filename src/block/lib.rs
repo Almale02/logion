@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use crate::lib::Identifier::Identifier;
+use crate::material::lib::*;
 use std::collections::HashMap;
 
 // SECTION: BLOCK_STATE
@@ -11,9 +12,11 @@ pub struct BlockState {
 // SECTION: BLOCK
 pub trait Block {
     fn block_id(&self) -> Identifier;
+    fn render_type(&self) -> &BlockRenderType;
+    fn set_rendertype(&mut self, value: BlockRenderType);
     fn states(&self) -> HashMap<Identifier, BlockState>;
-    fn state(&self) -> &Identifier;
-    fn set_state(&mut self, value: Identifier);
+    fn gen_materials(&mut self, x: usize, y: usize) -> &HashMap<MaterialType, u8>;
+    fn get_materials(&self) -> &HashMap<MaterialType, u8>;
 }
 // SECTOIN: GRASS_FACING
 #[derive(Clone, Debug)]
@@ -24,11 +27,13 @@ pub enum GrassFacing {
     TopLeftRight(String),
 }
 // SECTION: BLOCK_RENDER_TYPE
+#[derive(Debug, Clone)]
 pub enum BlockRenderType {
+    None(),
     BlockState(String),
-    Generated(Handle<Image>)
+    Generated(Handle<Image>),
 }
-// SECTON: HELPER_FN
+// SECTION: HELPER_FN
 pub fn add_block_state(
     map: &mut HashMap<Identifier, BlockState>,
     block_name: &str,

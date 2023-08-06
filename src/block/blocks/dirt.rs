@@ -2,34 +2,37 @@ use bevy::prelude::Component;
 
 use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
+use crate::material::lib::MaterialType;
+use crate::material::materials::m_dirt::DirtMaterial;
 use std::collections::HashMap;
 
-#[derive(Clone, Copy, Component)]
+#[derive(Clone, Component, Debug)]
 pub struct DirtBlock {
-    current_state: Identifier,
+    render_type: BlockRenderType,
     grass_facings: [GrassFacing; 4],
+    materials: HashMap<MaterialType, u8>,
 }
 impl DirtBlock {
     pub fn make_grassy(&mut self, left: bool, right: bool, top: bool) {
         if top && !left && !right {
-            self.current_state = Identifier {
-                id: "blockstate:{dirt:dirt_grass_t}".to_string(),
-            }
+            self.set_rendertype(BlockRenderType::BlockState(
+                "blockstate:{dirt:dirt_grass_t}".to_string(),
+            ))
         }
         if top && left && !right {
-            self.current_state = Identifier {
-                id: "blockstate:{dirt:dirt_grass_tl}".to_string(),
-            }
+            self.set_rendertype(BlockRenderType::BlockState(
+                "blockstate:{dirt:dirt_grass_tl}".to_string(),
+            ))
         }
         if top && !left && right {
-            self.current_state = Identifier {
-                id: "blockstate:{dirt:dirt_grass_tr}".to_string(),
-            }
+            self.set_rendertype(BlockRenderType::BlockState(
+                "blockstate:{dirt:dirt_grass_tr}".to_string(),
+            ))
         }
         if top && left && right {
-            self.current_state = Identifier {
-                id: "blockstate:{dirt:dirt_grass_tlr}".to_string(),
-            }
+            self.set_rendertype(BlockRenderType::BlockState(
+                "blockstate:{dirt:dirt_grass_tlr}".to_string(),
+            ))
         }
     }
 }
@@ -51,26 +54,44 @@ impl Block for DirtBlock {
 
         out
     }
-    fn state(&self) -> &Identifier {
-        &self.current_state
+    fn render_type(&self) -> &BlockRenderType {
+        &self.render_type
     }
-    fn set_state(&mut self, value: Identifier) {
-        self.current_state = value
+    fn set_rendertype(&mut self, value: BlockRenderType) {
+        self.render_type = value
+    }
+    fn gen_materials(&mut self, x: usize, y: usize) -> &HashMap<MaterialType, u8> {
+        let mut map: HashMap<MaterialType, u8> = HashMap::default();
+
+        map.insert(MaterialType::Dirt(DirtMaterial::default()), 80);
+        map.insert(MaterialType::Dirt(DirtMaterial::default()), 20);
+        self.materials = map;
+
+        &self.materials
+    }
+    fn get_materials(&self) -> &HashMap<MaterialType, u8> {
+        &self.materials
     }
 }
 
 impl Default for DirtBlock {
     fn default() -> Self {
         DirtBlock {
-            current_state: Identifier {
-                id: "blockstate:{dirt:dirt}".to_string(),
-            },
+            render_type: BlockRenderType::BlockState("blockstate:{dirt:dirt}".to_string()),
             grass_facings: [
                 GrassFacing::Top("dirt/grass_state/dirt_grass_t.png".to_string()),
                 GrassFacing::TopLeft("dirt/grass_state/dirt_grass_tl.png".to_string()),
                 GrassFacing::TopRight("dirt/grass_state/dirt_grass_tr.png".to_string()),
                 GrassFacing::TopLeftRight("dirt/grass_state/dirt_grass_tlr.png".to_string()),
             ],
+            materials: default_mat(),
         }
     }
+}
+fn default_mat() -> HashMap<MaterialType, u8> {
+    let mut map: HashMap<MaterialType, u8> = HashMap::default();
+
+    map.insert(MaterialType::Dirt(DirtMaterial::default()), 100);
+
+    map
 }

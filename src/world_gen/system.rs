@@ -1,21 +1,16 @@
 #![allow(unused_mut)]
 
-use std::sync::{Arc, Mutex};
-
-use bevy_rapier2d::prelude::*;
-
+use bevy::asset::LoadState;
 use bevy::prelude::*;
 
+use crate::block::block_type::BlockConvertible;
 use crate::block::{block_type::BlockType, blocks::*, lib::*};
-use crate::lib::USVec2::USVec2;
-use crate::resource::{block_texture::BlockTexture, level_data::LevelData};
+use crate::resource::level_data::LevelData;
 
 pub fn generate_world(mut level_data: ResMut<LevelData>) {
-    let world_size: usize = level_data.world_size.y.try_into().unwrap();
+    let mut grid = level_data.gen_grid.clone();
 
-    let mut grid = level_data.block_gird.clone();
-
-    for (y, row) in level_data.block_gird.iter().enumerate() {
+    for (y, row) in level_data.gen_grid.iter().enumerate() {
         for (x, block) in row.iter().enumerate() {
             if y == level_data.change_y_smallest(11) {
                 if rand::random::<bool>() {
@@ -24,20 +19,22 @@ pub fn generate_world(mut level_data: ResMut<LevelData>) {
             }
 
             if y >= level_data.change_y_smallest(10) {
+                println!("{}", true);
                 grid[y][x] = BlockType::Dirt(dirt::DirtBlock::default())
             }
             if y >= level_data.change_y_smallest(3) {
+                println!("{}", true);
                 grid[y][x] = BlockType::Stone(stone::StoneBlock::default());
             }
         }
     }
 
-    level_data.block_gird = grid;
+    level_data.gen_grid = grid;
 }
 pub fn generate_grass(mut level_data: ResMut<LevelData>) {
-    let world = level_data.block_gird.clone();
+    let world = level_data.gen_grid.clone();
 
-    for (y, row) in level_data.block_gird.iter_mut().enumerate() {
+    for (y, row) in level_data.gen_grid.iter_mut().enumerate() {
         for (x, block) in row.iter_mut().enumerate() {
             match block {
                 BlockType::Dirt(dirt) => {
@@ -64,3 +61,28 @@ pub fn generate_grass(mut level_data: ResMut<LevelData>) {
         }
     }
 }
+pub fn materialize(
+    asset_server: Res<AssetServer>,
+    mut level_data: ResMut<LevelData>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut image_assets: ResMut<Assets<Image>>,
+) {
+    let world = level_data.gen_grid.clone();
+
+    for (y, row) in level_data.gen_grid.iter_mut().enumerate() {
+        for (x, block) in row.iter_mut().enumerate() {
+            let base_state = match block.as_block().render_type() {
+                BlockRenderType::None() => continue,
+                BlockRenderType::BlockState(x) => x.to_owned(),
+                BlockRenderType::Generated(_) => unreachable!(),
+            };
+            let image_handle: Handle<Image> = asset_server.load("path/to/your/image.png");
+
+            let image_data = image_assets.get(&image_handle).unwrap();
+
+            let a = &image_data.data; // INFO: me have default image data!
+        }
+    }
+}
+
+fn png_to_rgb_image(handle: Handle<Image>) {}

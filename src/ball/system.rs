@@ -58,8 +58,8 @@ pub fn spawn_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
         SpriteBundle {
             texture: asset_server.load("player.png"),
             transform: Transform::from_scale(Vec3 {
-                x: 2.,
-                y: 2.,
+                x: 2.15,
+                y: 2.15,
                 z: 0.,
             })
             .with_translation(Vec3 {
@@ -69,7 +69,7 @@ pub fn spawn_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
             }),
             ..default()
         },
-        Collider::ball(16. / 2. * 2. / 3.),
+        Collider::ball(16. / 3. + 3.27),
         KinematicCharacterController::default(),
         KinematicCharacterControllerOutput::default(),
         Velocity::zero(),
