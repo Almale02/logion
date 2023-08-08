@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use bevy_rapier2d::prelude::*;
 
-use crate::block::{block_type::*, blocks::*, lib::*};
+use crate::block::{block_type::*, lib::*};
 use crate::lib::Identifier::Identifier;
 use crate::lib::USVec2::USVec2;
 use crate::resource::level_data::LevelData;

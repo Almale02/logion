@@ -13,9 +13,6 @@ impl Material for DirtMaterial {
     fn id(&self) -> &Identifier {
         &self.id
     }
-    fn color(&self) -> Rgb<u8> {
-        self.color
-    }
     fn base_block(&self) -> Identifier {
         Identifier {
             id: "block:{dirt}".into(),
@@ -23,10 +20,10 @@ impl Material for DirtMaterial {
     }
     fn write_pixles(
         &self,
-        image: RgbImage,
-        pixel_usage: Vec<Vec2>,
-        base_image: Handle<Image>,
-        percent: u8,
+        _image: RgbImage,
+        _pixel_usage: Vec<Vec<bool>>,
+        _base_image: Handle<Image>,
+        _percent: u8,
     ) -> RgbImage {
         // TODO: implement write_pixles for dirt material
         todo!()

@@ -56,7 +56,7 @@ pub fn spawn_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Ball,
         SpriteBundle {
-            texture: asset_server.load("player.png"),
+            texture: asset_server.load("image/player.png"),
             transform: Transform::from_scale(Vec3 {
                 x: 2.15,
                 y: 2.15,

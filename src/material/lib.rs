@@ -17,15 +17,13 @@ impl MaterialType {
         }
     }
 }
-
 pub trait Material {
     fn id(&self) -> &Identifier;
-    fn color(&self) -> Rgb<u8>;
     fn base_block(&self) -> Identifier;
     fn write_pixles(
         &self,
         image: RgbImage,
-        pixel_usage: Vec<Vec2>,
+        pixel_usage: Vec<Vec<bool>>,
         base_image: Handle<Image>,
         percent: u8,
     ) -> RgbImage;

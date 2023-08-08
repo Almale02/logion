@@ -1,11 +1,8 @@
-use std::path::{Path, PathBuf};
-
-use crate::block::{block_type::BlockType, blocks::air::AirBlock, lib::Block};
+use crate::block::{block_type::BlockType, blocks::air::AirBlock};
 
 use crate::lib::USVec2::*;
 
-use bevy::reflect::Array;
-use bevy::{asset::Asset, prelude::*, utils::HashMap};
+use bevy::prelude::*;
 
 #[derive(Resource)]
 pub struct LevelData {

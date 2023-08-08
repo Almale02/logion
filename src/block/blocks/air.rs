@@ -20,13 +20,13 @@ impl Block for AirBlock {
     fn render_type(&self) -> &BlockRenderType {
         &self.render_type
     }
-    fn set_rendertype(&mut self, value: BlockRenderType) {
+    fn set_rendertype(&mut self, _value: BlockRenderType) {
         unreachable!()
     }
     fn get_materials(&self) -> &HashMap<MaterialType, u8> {
         unreachable!()
     }
-    fn gen_materials(&mut self, x: usize, y: usize) -> &HashMap<MaterialType, u8> {
+    fn gen_materials(&mut self, _x: usize, _y: usize) -> &HashMap<MaterialType, u8> {
         unreachable!()
     }
 }

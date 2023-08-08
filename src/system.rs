@@ -1,8 +1,4 @@
-use rand::prelude::*;
-
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
-
-use bevy_rapier2d::prelude::*;
+use bevy::prelude::*;
 
 use crate::component::*;
 

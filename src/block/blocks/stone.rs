@@ -26,7 +26,7 @@ impl Block for StoneBlock {
                 id: "blockstate:{stone:stone}".to_string(),
             },
             BlockState {
-                state_image: "stone/stone.png".to_string(),
+                state_image: "image/stone/stone.png".to_string(),
             },
         );
 
@@ -40,8 +40,8 @@ impl Block for StoneBlock {
     }
     fn gen_materials(
         &mut self,
-        x: usize,
-        y: usize,
+        _x: usize,
+        _y: usize,
     ) -> &HashMap<crate::material::lib::MaterialType, u8> {
         let mut map: HashMap<MaterialType, u8> = HashMap::default();
 
@@ -59,7 +59,7 @@ impl Block for StoneBlock {
 impl Default for StoneBlock {
     fn default() -> Self {
         StoneBlock {
-            render_type: BlockRenderType::BlockState("blockstate:{stone:stone}".to_string()),
+            render_type: BlockRenderType::BlockState("image/stone/stone.png".to_string()),
             materials: default_mat(),
         }
     }
