@@ -1,13 +1,13 @@
-use bevy::prelude::{Handle, Image, Vec2};
-use image::{Rgb, RgbImage};
+use bevy::prelude::Vec2;
+use rand::Rng;
 
 use crate::lib::Identifier::Identifier;
 use crate::material::lib::*;
+use image::{Rgb, Rgba, RgbaImage};
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct DirtMaterial {
     id: Identifier,
-    color: Rgb<u8>,
 }
 impl Material for DirtMaterial {
     fn id(&self) -> &Identifier {
@@ -18,15 +18,28 @@ impl Material for DirtMaterial {
             id: "block:{dirt}".into(),
         }
     }
-    fn write_pixles(
-        &self,
-        _image: RgbImage,
-        _pixel_usage: Vec<Vec<bool>>,
-        _base_image: Handle<Image>,
-        _percent: u8,
-    ) -> RgbImage {
-        // TODO: implement write_pixles for dirt material
-        todo!()
+    fn write_pixles(&self, image: &mut RgbaImage, pixel_usage: &mut [[bool; 16]; 16], count: u8) {
+        let mut pixels_put: Vec<Vec2> = Vec::default();
+        for y in 0..16 {
+            for x in 0..16 {
+                pixels_put.push(Vec2 {
+                    x: x as f32,
+                    y: y as f32,
+                });
+            }
+        }
+        for x in 0..(256 - count as u16) {
+            pixels_put.remove(rand::thread_rng().gen_range(0..pixels_put.len()));
+        }
+
+        for (x, y, pixel) in image.enumerate_pixels_mut() {
+            if pixels_put.contains(&Vec2 {
+                x: x as f32,
+                y: y as f32,
+            }) {
+                *pixel = Rgba([141, 111, 86, 255])
+            }
+        }
     }
 }
 impl Default for DirtMaterial {
@@ -35,7 +48,6 @@ impl Default for DirtMaterial {
             id: Identifier {
                 id: "material:{dirt}".to_string(),
             },
-            color: Rgb([130, 91, 60]),
         }
     }
 }

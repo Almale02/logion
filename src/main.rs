@@ -17,6 +17,7 @@ mod block;
 mod lib;
 mod material;
 mod resource;
+mod unit;
 mod world_gen;
 mod world_load;
 
@@ -50,7 +51,7 @@ fn main() {
             bevy_framepace::FramepacePlugin,
         ))
         //.add_plugins(RapierDebugRenderPlugin::default())
-        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.))
+        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(16.))
         //.init_resource::<GameAssets>()
         .init_resource::<LevelData>()
         .add_state::<GameState>()
@@ -64,6 +65,7 @@ fn main() {
                 frame_rate,
                 init_rendering,
                 generate_world,
+                fill_terrain_list,
                 generate_grass,
                 materialize,
                 load_world,
@@ -79,7 +81,6 @@ fn main() {
 }
 fn frame_rate(mut rate: ResMut<FramepaceSettings>) {
     rate.limiter = Limiter::from_framerate(90.);
-    let _a = 3;
 }
 #[derive(Clone, PartialEq, Eq, Debug, Hash, Default, States)]
 enum GameState {

@@ -14,9 +14,10 @@ bevy_rapier2d = { version = "0.22.0", features = [
 	"debug-render-2d",
 ] }
 image = "0.24.6"
+ordered-float = "3.7.0"
 rand = "0.8.5"
 
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code
 [profile.dev.package."*"]
 opt-level = 3
 # Enable a small amount of optimization in debug mode

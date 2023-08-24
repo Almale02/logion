@@ -1,5 +1,9 @@
-use bevy::prelude::{Handle, Image, Vec2};
-use image::{Rgb, RgbImage};
+use rand::Rng;
+
+use bevy::prelude::Vec2;
+use bevy_rapier2d::na::Vector2;
+use image::buffer::EnumeratePixels;
+use image::{PixelWithColorType, Rgb, Rgba, RgbaImage};
 
 use crate::lib::Identifier::Identifier;
 use crate::material::lib::*;
@@ -18,15 +22,29 @@ impl Material for StoneMaterial {
             id: "block:{stone}".into(),
         }
     }
-    fn write_pixles(
-        &self,
-        _image: RgbImage,
-        _pixel_usage: Vec<Vec<bool>>,
-        _base_image: Handle<Image>,
-        _percent: u8,
-    ) -> RgbImage {
-        // TODO: implement write_pixles for stone material
-        todo!()
+    fn write_pixles(&self, image: &mut RgbaImage, pixel_usage: &mut [[bool; 16]; 16], count: u8) {
+        let mut pixels_put: Vec<Vec2> = Vec::default();
+        for y in 0..16 {
+            for x in 0..16 {
+                pixels_put.push(Vec2 {
+                    x: x as f32,
+                    y: y as f32,
+                });
+            }
+        }
+
+        for x in 0..(256 - count as u16) {
+            pixels_put.remove(rand::thread_rng().gen_range(0..pixels_put.len()));
+        }
+
+        for (x, y, pixel) in image.enumerate_pixels_mut() {
+            if pixels_put.contains(&Vec2 {
+                x: x as f32,
+                y: y as f32,
+            }) {
+                *pixel = Rgba([115, 115, 115, 255])
+            }
+        }
     }
 }
 impl Default for StoneMaterial {

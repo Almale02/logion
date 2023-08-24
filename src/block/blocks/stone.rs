@@ -2,14 +2,15 @@ use bevy::prelude::Component;
 
 use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
-use crate::material::lib::MaterialType;
+use crate::material::lib::{MaterialGenList, MaterialType};
+use crate::material::materials::m_dirt::DirtMaterial;
 use crate::material::materials::m_stone::StoneMaterial;
 use std::collections::HashMap;
 
-#[derive(Clone, Component, Debug)]
+#[derive(Clone, Component, Debug, PartialEq, Eq, Hash)]
 pub struct StoneBlock {
     render_type: BlockRenderType,
-    materials: HashMap<MaterialType, u8>,
+    materials: MaterialGenList,
 }
 
 impl Block for StoneBlock {
@@ -38,20 +39,13 @@ impl Block for StoneBlock {
     fn set_rendertype(&mut self, value: BlockRenderType) {
         self.render_type = value
     }
-    fn gen_materials(
-        &mut self,
-        _x: usize,
-        _y: usize,
-    ) -> &HashMap<crate::material::lib::MaterialType, u8> {
-        let mut map: HashMap<MaterialType, u8> = HashMap::default();
-
-        map.insert(MaterialType::Stone(StoneMaterial::default()), 100);
-
-        self.materials = map;
+    fn gen_materials(&mut self, _x: usize, _y: usize, multiplyer: f32) -> &MaterialGenList {
+        self.materials
+            .add_material(MaterialType::Stone(StoneMaterial::default()), 80, true);
 
         &self.materials
     }
-    fn get_materials(&self) -> &HashMap<MaterialType, u8> {
+    fn get_materials(&self) -> &MaterialGenList {
         &self.materials
     }
 }
@@ -60,15 +54,7 @@ impl Default for StoneBlock {
     fn default() -> Self {
         StoneBlock {
             render_type: BlockRenderType::BlockState("image/stone/stone.png".to_string()),
-            materials: default_mat(),
+            materials: MaterialGenList::default(),
         }
     }
-}
-
-fn default_mat() -> HashMap<MaterialType, u8> {
-    let mut map: HashMap<MaterialType, u8> = HashMap::default();
-
-    map.insert(MaterialType::Stone(StoneMaterial::default()), 100);
-
-    map
 }

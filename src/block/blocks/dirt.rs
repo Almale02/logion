@@ -2,15 +2,16 @@ use bevy::prelude::Component;
 
 use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
-use crate::material::lib::MaterialType;
+use crate::material::lib::{MaterialGenList, MaterialType};
 use crate::material::materials::m_dirt::DirtMaterial;
+use crate::material::materials::m_stone::StoneMaterial;
 use std::collections::HashMap;
 
-#[derive(Clone, Component, Debug)]
+#[derive(Clone, Component, Debug, PartialEq, Eq, Hash)]
 pub struct DirtBlock {
     render_type: BlockRenderType,
     grass_facings: [GrassFacing; 4],
-    materials: HashMap<MaterialType, u8>,
+    materials: MaterialGenList,
 }
 impl DirtBlock {
     pub fn make_grassy(&mut self, left: bool, right: bool, top: bool) {
@@ -40,7 +41,7 @@ impl DirtBlock {
 impl Block for DirtBlock {
     fn block_id(&self) -> Identifier {
         Identifier {
-            id: String::from("block:{dirt}}"),
+            id: String::from("block:{dirt}"),
         }
     }
     fn states(&self) -> HashMap<Identifier, BlockState> {
@@ -60,16 +61,26 @@ impl Block for DirtBlock {
     fn set_rendertype(&mut self, value: BlockRenderType) {
         self.render_type = value
     }
-    fn gen_materials(&mut self, _x: usize, _y: usize) -> &HashMap<MaterialType, u8> {
-        let mut map: HashMap<MaterialType, u8> = HashMap::default();
-
-        map.insert(MaterialType::Dirt(DirtMaterial::default()), 80);
-        map.insert(MaterialType::Dirt(DirtMaterial::default()), 20);
-        self.materials = map;
+    fn gen_materials(&mut self, _x: usize, _y: usize, multiplyer: f32) -> &MaterialGenList {
+        if let BlockRenderType::BlockState(x) = self.render_type() {
+            if x != "image/dirt/dirt.png" {
+                self.materials
+                    .add_material(MaterialType::Dirt(DirtMaterial::default()), 100, true);
+                return &self.materials;
+            }
+        }
+        // TODO: make it so you dont need to specify the material count for default materials.
+        self.materials
+            .add_material(MaterialType::Dirt(DirtMaterial::default()), 0, true);
+        self.materials.add_material(
+            MaterialType::Stone(StoneMaterial::default()),
+            (20. * multiplyer) as u8,
+            false,
+        );
 
         &self.materials
     }
-    fn get_materials(&self) -> &HashMap<MaterialType, u8> {
+    fn get_materials(&self) -> &MaterialGenList {
         &self.materials
     }
 }
@@ -84,14 +95,7 @@ impl Default for DirtBlock {
                 GrassFacing::TopRight("image/dirt/grass_state/dirt_grass_tr.png".to_string()),
                 GrassFacing::TopLeftRight("image/dirt/grass_state/dirt_grass_tlr.png".to_string()),
             ],
-            materials: default_mat(),
+            materials: MaterialGenList::default(),
         }
     }
-}
-fn default_mat() -> HashMap<MaterialType, u8> {
-    let mut map: HashMap<MaterialType, u8> = HashMap::default();
-
-    map.insert(MaterialType::Dirt(DirtMaterial::default()), 100);
-
-    map
 }

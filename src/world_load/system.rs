@@ -16,6 +16,7 @@ pub fn load_world(
 
     for (y, row) in level_data.gen_grid.iter().enumerate() {
         for (x, block) in row.iter().enumerate() {
+            let block = &block.block;
             let global_pos = level_data.grid_to_global_space_unit(USVec2 { x, y });
 
             let handle: Handle<Image> = match block.as_block().render_type() {

@@ -1,7 +1,7 @@
 use crate::block::blocks::{air::AirBlock, dirt::DirtBlock, stone::StoneBlock};
 use crate::block::lib::Block;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq, Debug, Hash)]
 pub enum BlockType {
     Air(AirBlock),
     Dirt(DirtBlock),

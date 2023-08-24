@@ -15,11 +15,11 @@ pub trait Block {
     fn render_type(&self) -> &BlockRenderType;
     fn set_rendertype(&mut self, value: BlockRenderType);
     fn states(&self) -> HashMap<Identifier, BlockState>;
-    fn gen_materials(&mut self, x: usize, y: usize) -> &HashMap<MaterialType, u8>;
-    fn get_materials(&self) -> &HashMap<MaterialType, u8>;
+    fn gen_materials(&mut self, x: usize, y: usize, multiplyer: f32) -> &MaterialGenList;
+    fn get_materials(&self) -> &MaterialGenList;
 }
 // SECTOIN: GRASS_FACING
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum GrassFacing {
     Top(String),
     TopLeft(String),
@@ -27,7 +27,7 @@ pub enum GrassFacing {
     TopLeftRight(String),
 }
 // SECTION: BLOCK_RENDER_TYPE
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum BlockRenderType {
     None(),
     BlockState(String),
