@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
-use crate::material::lib::{MaterialGenList, MaterialType};
+use crate::material::lib::{MaterialGenList};
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AirBlock {
@@ -26,7 +26,7 @@ impl Block for AirBlock {
     fn get_materials(&self) -> &MaterialGenList {
         unreachable!()
     }
-    fn gen_materials(&mut self, _x: usize, _y: usize, multiplyer: f32) -> &MaterialGenList {
+    fn gen_materials(&mut self, _x: usize, _y: usize, _multiplyer: f32) -> &MaterialGenList {
         unreachable!()
     }
 }

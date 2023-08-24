@@ -1,19 +1,19 @@
 #![allow(unused_mut)]
 
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+
+
 
 use bevy::prelude::*;
-use bevy::render::render_resource::{Extent3d, Texture, TextureDimension, TextureFormat};
-use bevy::render::texture::{CompressedImageFormats, ImageType};
-use image::buffer::ConvertBuffer;
-use image::{ImageOutputFormat, Rgb, RgbImage, Rgba, RgbaImage};
+use bevy::render::render_resource::{Extent3d, TextureDimension, TextureFormat};
+
+
+use image::{Rgba, RgbaImage};
 
 use crate::block::block_type::BlockConvertible;
-use crate::block::blocks::dirt::DirtBlock;
+
 use crate::block::{block_type::BlockType, blocks::*, lib::*};
 use crate::lib::USVec2::USVec2;
-use crate::material::lib::MaterialType;
+
 use crate::resource::level_data::LevelData;
 
 pub fn generate_world(mut level_data: ResMut<LevelData>) {

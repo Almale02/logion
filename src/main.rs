@@ -1,11 +1,11 @@
-use std::default;
+
 
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_framepace::{FramepaceSettings, Limiter};
 use bevy_rapier2d::prelude::*;
 
-use image::{Rgb, RgbImage};
+
 
 // SECTION: root_file
 mod component;

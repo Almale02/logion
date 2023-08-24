@@ -3,7 +3,7 @@ use bevy::prelude::Component;
 use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
 use crate::material::lib::{MaterialGenList, MaterialType};
-use crate::material::materials::m_dirt::DirtMaterial;
+
 use crate::material::materials::m_stone::StoneMaterial;
 use std::collections::HashMap;
 
@@ -39,7 +39,7 @@ impl Block for StoneBlock {
     fn set_rendertype(&mut self, value: BlockRenderType) {
         self.render_type = value
     }
-    fn gen_materials(&mut self, _x: usize, _y: usize, multiplyer: f32) -> &MaterialGenList {
+    fn gen_materials(&mut self, _x: usize, _y: usize, _multiplyer: f32) -> &MaterialGenList {
         self.materials
             .add_material(MaterialType::Stone(StoneMaterial::default()), 80, true);
 

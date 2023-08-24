@@ -1,4 +1,4 @@
-use crate::block::blocks::dirt::DirtBlock;
+
 use crate::material::lib::MaterialType;
 use crate::material::materials::m_dirt::DirtMaterial;
 use crate::material::materials::m_stone::StoneMaterial;
@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 use ordered_float::OrderedFloat;
 
-use crate::block::blocks::stone::StoneBlock;
+
 use crate::block::{block_type::BlockType, blocks::air::AirBlock};
 
 use crate::lib::USVec2::*;

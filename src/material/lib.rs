@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-use bevy::prelude::{Handle, Image, Vec2};
-use image::{Rgb, RgbaImage};
+
+use image::{RgbaImage};
 
 use crate::lib::Identifier::Identifier;
 use crate::material::materials::*;
