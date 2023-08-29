@@ -2,7 +2,6 @@ use rand::Rng;
 
 use bevy::prelude::Vec2;
 
-
 use image::{Rgb, Rgba, RgbaImage};
 
 use crate::lib::Identifier::Identifier;
@@ -22,7 +21,7 @@ impl Material for StoneMaterial {
             id: "block:{stone}".into(),
         }
     }
-    fn write_pixles(&self, image: &mut RgbaImage, _pixel_usage: &mut [[bool; 16]; 16], count: u8) {
+    fn write_pixles(&self, image: &mut RgbaImage, pixel_usage: &mut [[bool; 16]; 16], count: u8) {
         let mut pixels_put: Vec<Vec2> = Vec::default();
         for y in 0..16 {
             for x in 0..16 {
@@ -42,6 +41,7 @@ impl Material for StoneMaterial {
                 x: x as f32,
                 y: y as f32,
             }) {
+                pixel_usage[y as usize][x as usize] = true;
                 *pixel = Rgba([115, 115, 115, 255])
             }
         }

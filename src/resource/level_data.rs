@@ -1,12 +1,11 @@
-
 use crate::material::lib::MaterialType;
 use crate::material::materials::m_dirt::DirtMaterial;
 use crate::material::materials::m_stone::StoneMaterial;
+use crate::world_gen::ore_gen::lib::OrePatchData;
 
 use std::collections::HashMap;
 
 use ordered_float::OrderedFloat;
-
 
 use crate::block::{block_type::BlockType, blocks::air::AirBlock};
 
@@ -19,7 +18,7 @@ pub struct LevelData {
     pub grid_unit: u8,
     pub world_size: USVec2,
     pub block_gird: [[Entity; 90]; 30],
-    pub terrain_list: Vec<USVec2>,
+    pub terrain_map: HashMap<USVec2, bool>,
     pub gen_grid: Vec<Vec<GenTileGridData>>,
 }
 impl Default for LevelData {
@@ -28,7 +27,7 @@ impl Default for LevelData {
             grid_unit: 32,
             world_size: USVec2 { x: 90, y: 30 },
             gen_grid: vec![vec![GenTileGridData::default(); 90]; 30],
-            terrain_list: Vec::default(),
+            terrain_map: HashMap::default(),
             block_gird: [[Entity::PLACEHOLDER; 90]; 30],
         }
     }
@@ -50,13 +49,13 @@ impl LevelData {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GenTileGridData {
     pub block: BlockType,
-    pub material_multiplier: OrderedFloat<f32>,
+    pub ore_patch: OrePatchData,
 }
 impl Default for GenTileGridData {
     fn default() -> Self {
         GenTileGridData {
             block: BlockType::Air(AirBlock::default()),
-            material_multiplier: OrderedFloat(0.),
+            ore_patch: OrePatchData::default(),
         }
     }
 }

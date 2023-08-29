@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-
-use image::{RgbaImage};
+use image::RgbaImage;
 
 use crate::lib::Identifier::Identifier;
 use crate::material::materials::*;
@@ -12,18 +11,21 @@ use crate::material::materials::*;
 pub enum MaterialType {
     Dirt(m_dirt::DirtMaterial),
     Stone(m_stone::StoneMaterial),
+    Iron(m_iron::IronMaterial),
 }
 impl MaterialType {
     pub fn as_mateiral(&self) -> &dyn Material {
         match self {
             MaterialType::Dirt(x) => x,
             MaterialType::Stone(x) => x,
+            MaterialType::Iron(x) => x,
         }
     }
     pub fn as_material_mut(&mut self) -> &mut dyn Material {
         match self {
             MaterialType::Dirt(x) => x,
             MaterialType::Stone(x) => x,
+            MaterialType::Iron(x) => x,
         }
     }
 }
@@ -49,14 +51,16 @@ impl MaterialGenList {
     pub fn material_count(&self) -> u8 {
         self.material_count
     }
-    pub fn add_material(&mut self, material: MaterialType, count: u8, is_base: bool) {
+    pub fn add_material(&mut self, material: MaterialType, count: u8, is_base: bool) -> &mut Self {
         if !is_base {
-            if self.material_count + count > 50 {
+            if self.material_count + count > 100 {
                 // TODO: make it work with errors insead of panics!
                 panic!("too much mateiral has been added")
             }
         }
         self.list.insert(material, count);
+
+        self
     }
 }
 impl Hash for MaterialGenList {

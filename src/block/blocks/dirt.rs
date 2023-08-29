@@ -4,6 +4,7 @@ use crate::block::lib::*;
 use crate::lib::Identifier::Identifier;
 use crate::material::lib::{MaterialGenList, MaterialType};
 use crate::material::materials::m_dirt::DirtMaterial;
+use crate::material::materials::m_iron::IronMaterial;
 use crate::material::materials::m_stone::StoneMaterial;
 use std::collections::HashMap;
 
@@ -62,21 +63,22 @@ impl Block for DirtBlock {
         self.render_type = value
     }
     fn gen_materials(&mut self, _x: usize, _y: usize, multiplyer: f32) -> &MaterialGenList {
-        if let BlockRenderType::BlockState(x) = self.render_type() {
+        /*if let BlockRenderType::BlockState(x) = self.render_type() {
             if x != "image/dirt/dirt.png" {
                 self.materials
                     .add_material(MaterialType::Dirt(DirtMaterial::default()), 100, true);
                 return &self.materials;
             }
-        }
+        }*/
         // TODO: make it so you dont need to specify the material count for default materials.
         self.materials
+            .add_material(
+                MaterialType::Stone(StoneMaterial::default()),
+                (15. * multiplyer) as u8,
+                false,
+            )
+            //.add_material(MaterialType::Iron(IronMaterial::default()), 11, false)
             .add_material(MaterialType::Dirt(DirtMaterial::default()), 0, true);
-        self.materials.add_material(
-            MaterialType::Stone(StoneMaterial::default()),
-            (20. * multiplyer) as u8,
-            false,
-        );
 
         &self.materials
     }
