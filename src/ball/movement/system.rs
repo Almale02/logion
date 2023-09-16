@@ -1,17 +1,6 @@
 use bevy::prelude::*;
 
-use crate::component::*;
-
-pub fn init_rendering(mut commands: Commands) {
-    commands.spawn(Camera2dBundle {
-        transform: Transform::from_translation(Vec3 {
-            x: (0.),
-            y: (360.),
-            z: (100.),
-        }),
-        ..default()
-    });
-}
+use crate::ball::component::Ball;
 
 pub fn move_camera(
     mut set: ParamSet<(

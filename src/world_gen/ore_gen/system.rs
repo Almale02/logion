@@ -3,7 +3,8 @@ use rand::seq::SliceRandom;
 use rand::Rng;
 
 use crate::{
-    lib::USVec2::USVec2, resource::level_data::LevelData, world_gen::ore_gen::lib::OrePatchData,
+    lib::math::usvec2::USVec2, resource::level_data::LevelData,
+    world_gen::ore_gen::lib::OrePatchData,
 };
 use bevy::prelude::*;
 
@@ -13,7 +14,7 @@ pub fn gen_ore_patch_centers(mut level_data: ResMut<LevelData>) {
     let mut patch_positions: Vec<USVec2> = level_data.terrain_map.keys().cloned().collect();
 
     patch_positions.shuffle(&mut rand::thread_rng());
-    let patch_positions = &mut patch_positions[0..7].to_vec();
+    let patch_positions = &mut patch_positions[0..20].to_vec();
     {
         //*patch_positions = vec![USVec2::new(6, level_data.change_y_smallest(9))];
 
@@ -22,8 +23,8 @@ pub fn gen_ore_patch_centers(mut level_data: ResMut<LevelData>) {
             level_data.gen_grid[val.y][val.x].ore_patch = OrePatchData::Root(root_data.clone());
 
             // SECTION: Generate sub parts
-            let width = rand::thread_rng().gen_range(3..=6);
-            let height = rand::thread_rng().gen_range(3..=6);
+            let width = rand::thread_rng().gen_range(4..=7);
+            let height = rand::thread_rng().gen_range(4..=7);
             //let (width, height) = (5, 5);
 
             for y in val.y..val.y + width {
@@ -49,10 +50,10 @@ pub fn gen_ore_patch_centers(mut level_data: ResMut<LevelData>) {
 }
 fn f(x: f32) -> f32 {
     let a: f32 = 6.;
-    let b: f32 = 0.6;
+    let b: f32 = 0.7;
     let c: f32 = 1.6;
 
-    return f32::max(2.1, a * c.powf(b * -x));
+    return f32::max(1.5, a * c.powf(b * -x));
 }
 fn calc_multiplier(max_distance: usize, distance: usize) -> OrderedFloat<f32> {
     // SECTION: smooth the ending

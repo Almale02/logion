@@ -1,7 +1,7 @@
 use bevy::prelude::default;
 use ordered_float::OrderedFloat;
 
-use crate::lib::USVec2::USVec2;
+use crate::lib::math::usvec2::USVec2;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Default)]
 pub enum OrePatchData {

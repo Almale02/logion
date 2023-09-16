@@ -4,7 +4,7 @@ use bevy::prelude::Vec2;
 
 use image::{Rgb, Rgba, RgbaImage};
 
-use crate::lib::Identifier::Identifier;
+use crate::lib::identifier::Identifier;
 use crate::material::lib::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]

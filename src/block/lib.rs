@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::lib::Identifier::Identifier;
+use crate::lib::identifier::Identifier;
 use crate::material::lib::*;
 use std::collections::HashMap;
 

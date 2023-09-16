@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use crate::block::lib::*;
-use crate::lib::Identifier::Identifier;
-use crate::material::lib::{MaterialGenList};
+use crate::lib::identifier::Identifier;
+use crate::material::lib::MaterialGenList;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AirBlock {

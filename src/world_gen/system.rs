@@ -1,45 +1,47 @@
 #![allow(unused_mut)]
 
+use noise::{Fbm, NoiseFn};
+
 use bevy::prelude::*;
 use bevy::render::render_resource::{Extent3d, TextureDimension, TextureFormat};
 
 use image::{Rgba, RgbaImage};
-use ordered_float::OrderedFloat;
 
 use crate::block::block_type::BlockConvertible;
 
+use crate::block::blocks::air::AirBlock;
+use crate::block::blocks::dirt::DirtBlock;
+use crate::block::blocks::stone::StoneBlock;
 use crate::block::{block_type::BlockType, blocks::*, lib::*};
-use crate::lib::USVec2::USVec2;
+use crate::lib::math::usvec2::USVec2;
 
 use crate::resource::level_data::LevelData;
 
 use super::ore_gen::lib::OrePatchData;
 
-pub fn generate_world(mut level_data: ResMut<LevelData>) {
-    let mut grid = level_data.gen_grid.clone();
+pub fn gen_terrain_height(mut level_data: ResMut<LevelData>) {
+    let mut world_grid = level_data.gen_grid.clone();
+    let height_data = level_data.generation_data.terrain_height.clone();
 
-    for (y, row) in level_data.gen_grid.iter().enumerate() {
-        for (x, _block) in row.iter().enumerate() {
-            if y == level_data.change_y_smallest(11) {
-                if rand::random::<bool>() {
-                    grid[y][x].block = BlockType::Dirt(dirt::DirtBlock::default())
-                }
-            }
-            if y == level_data.change_y_smallest(15) && x == 10 {
-                grid[y][x].block = BlockType::Dirt(dirt::DirtBlock::default())
-            }
-
-            if y >= level_data.change_y_smallest(10) {
-                grid[y][x].block = BlockType::Dirt(dirt::DirtBlock::default())
-            }
-            if y >= level_data.change_y_smallest(3) {
-                grid[y][x].block = BlockType::Stone(stone::StoneBlock::default());
-            }
+    for x in 0..level_data.world_size.x {
+        let perlin_height = ((level_data
+            .generation_data
+            .perlin
+            .get([x as f64 / height_data.terrain_height_smoothness, 3.01])
+            + height_data.perlin_height_increment)
+            * height_data.perlin_height_multiplier) as usize;
+        level_data.terrain_height[x] = perlin_height as usize;
+    }
+    for (x, height) in level_data.terrain_height.iter().enumerate() {
+        for y in 0..=*height {
+            world_grid[level_data.change_y_smallest(y) - 1][x].block =
+                BlockType::Dirt(DirtBlock::default())
         }
     }
 
-    level_data.gen_grid = grid;
+    level_data.gen_grid = world_grid;
 }
+
 pub fn generate_grass(mut level_data: ResMut<LevelData>) {
     let world = level_data.gen_grid.clone();
 
@@ -63,6 +65,11 @@ pub fn generate_grass(mut level_data: ResMut<LevelData>) {
                         _ => false,
                     };
                     if y == 15 && x == 10 {
+                        continue;
+                    }
+                    if top && left && right {
+                        block.block = BlockType::Air(AirBlock::default());
+                        //world[y - 1][x].block = BlockType::Air(AirBlock::default());
                         continue;
                     }
                     dirt.make_grassy(left, right, top)

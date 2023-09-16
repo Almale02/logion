@@ -3,7 +3,7 @@ use std::hash::{Hash, Hasher};
 
 use image::RgbaImage;
 
-use crate::lib::Identifier::Identifier;
+use crate::lib::identifier::Identifier;
 use crate::material::materials::*;
 
 // SECTION: MATERIAL_TYPE

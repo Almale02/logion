@@ -3,7 +3,7 @@ use bevy::prelude::Component;
 use rand::prelude::*;
 
 use crate::block::lib::*;
-use crate::lib::Identifier::Identifier;
+use crate::lib::identifier::Identifier;
 use crate::material::lib::{MaterialGenList, MaterialType};
 
 use crate::material::materials::m_iron::IronMaterial;

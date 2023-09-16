@@ -1,15 +1,25 @@
+use bevy::input::mouse::*;
 use bevy::prelude::*;
 
-use bevy_rapier2d::prelude::*;
+use bevy_rapier2d::{
+    na::Vector1,
+    prelude::*,
+    rapier::prelude::{ImpulseJointSet, Vector},
+};
 
-use crate::component::*;
+use crate::{
+    ball::component::*,
+    lib::math::{deg_rad::deg_to_rad, vec1::Vec1},
+    resource::level_data::LevelData,
+};
 
 pub fn move_ball(
     mut q_movement: Query<
         (
-            &mut Velocity,
+            &mut Vec1,
             &mut KinematicCharacterController,
             &KinematicCharacterControllerOutput,
+            &mut Velocity,
         ),
         With<Ball>,
     >,
@@ -19,40 +29,64 @@ pub fn move_ball(
     )>,
     keyboard: Res<Input<KeyCode>>,
     time: Res<Time>,
+    mut should_jump_on_fall: Local<bool>,
 ) {
     let move_speed = 3.5;
-    let fall_speed = 2.5;
+    let fall_speed = 5.5;
 
-    for (mut y_vel, mut controller, controller_info) in q_movement.iter_mut() {
+    let e = Entity::PLACEHOLDER;
+
+    for (mut y_vel, mut controller, controller_info, mut velocity) in q_movement.iter_mut() {
+        controller.slide = true;
+        controller.min_slope_slide_angle = deg_to_rad(69);
+        controller.max_slope_climb_angle = deg_to_rad(55);
+        controller.offset = CharacterLength::Relative(0.05);
+
         let mut x_vel = 0.;
-        if keyboard.pressed(KeyCode::Right) {
-            x_vel = move_speed * time.delta_seconds() * 100.
+        {
+            if keyboard.pressed(KeyCode::Right) {
+                x_vel = move_speed * time.delta_seconds() * 100.
+            }
+            if keyboard.pressed(KeyCode::Left) {
+                x_vel = -move_speed * time.delta_seconds() * 100.
+            }
         }
-        if keyboard.pressed(KeyCode::Left) {
-            x_vel = -move_speed * time.delta_seconds() * 100.
-        }
-
-        if controller_info.grounded {
+        {
             if keyboard.just_pressed(KeyCode::Space) {
-                y_vel.linvel.y += 18. * (fall_speed / 2.)
+                if controller_info.grounded {
+                    **y_vel += 18. * (fall_speed / 2.5)
+                } else {
+                    *should_jump_on_fall = true;
+                }
+            }
+            if controller_info.grounded && *should_jump_on_fall {
+                **y_vel += 18. * (fall_speed / 2.5);
+                *should_jump_on_fall = false;
             }
         }
 
-        y_vel.linvel.y -= fall_speed * time.delta_seconds() * 50.;
-        if y_vel.linvel.y < -fall_speed {
-            y_vel.linvel.y = -fall_speed
+        // INFO: gravity
+        **y_vel -= fall_speed * time.delta_seconds() * 50.;
+        // INFO: ceil gravity
+        if **y_vel < -fall_speed {
+            **y_vel = -fall_speed
         }
 
         controller.translation = Some(Vect {
             x: x_vel,
-            y: y_vel.linvel.y,
+            y: **y_vel,
         });
 
         set.p1().single_mut().rotate_z(x_vel);
+        velocity.angvel = x_vel * 100.;
     }
 }
 
-pub fn spawn_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn spawn_ball(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    level_data: Res<LevelData>,
+) {
     commands.spawn((
         Ball,
         SpriteBundle {
@@ -64,14 +98,18 @@ pub fn spawn_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
             })
             .with_translation(Vec3 {
                 x: 0.,
-                y: 360.,
+                y: (level_data.terrain_height[0] as f32 + 5.) * level_data.grid_unit as f32,
                 z: 0.,
             }),
             ..default()
         },
-        Collider::ball(16. / 3. + 3.27),
+        //Collider::ball(16. / 3. + 3.27),
+        Collider::ball(16. / 2.15),
+        ColliderMassProperties::Density(1.2),
+        RigidBody::KinematicVelocityBased,
         KinematicCharacterController::default(),
         KinematicCharacterControllerOutput::default(),
-        Velocity::zero(),
+        Velocity::default(),
+        Vec1::default(),
     ));
 }

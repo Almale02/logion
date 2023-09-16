@@ -1,7 +1,7 @@
 use bevy::prelude::Vec2;
 use rand::Rng;
 
-use crate::lib::Identifier::Identifier;
+use crate::lib::identifier::Identifier;
 use crate::material::lib::*;
 use image::{Rgba, RgbaImage};
 

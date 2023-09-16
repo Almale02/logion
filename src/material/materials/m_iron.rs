@@ -6,8 +6,8 @@ use bevy::prelude::Vec2;
 
 use image::{Rgb, Rgba, RgbaImage};
 
-use crate::lib::Identifier::Identifier;
-use crate::lib::USVec2::USVec2;
+use crate::lib::identifier::Identifier;
+use crate::lib::math::usvec2::USVec2;
 use crate::material::lib::*;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
