@@ -20,7 +20,7 @@ use bevy::prelude::*;
 pub struct LevelData {
     pub grid_unit: u8,
     pub world_size: USVec2,
-    pub block_gird: [[Entity; 200]; 50],
+    pub block_gird: [[Entity; 200]; 90],
     pub gen_grid: Vec<Vec<GenTileGridData>>,
     pub terrain_map: HashMap<USVec2, bool>,
     pub terrain_height: [usize; 200],
@@ -29,7 +29,7 @@ pub struct LevelData {
 impl Default for LevelData {
     fn default() -> Self {
         const x: usize = 200;
-        const y: usize = 50;
+        const y: usize = 90;
         LevelData {
             grid_unit: 16 * 2,
             world_size: USVec2 { x, y },

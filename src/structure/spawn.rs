@@ -4,6 +4,7 @@ use bevy_rapier2d::prelude::{Collider, ColliderMassProperties, RigidBody};
 use crate::resource::level_data::LevelData;
 
 use super::lib::structure::Structure;
+use crate::structure::lib::structure_behaviour::StructureBehaviour;
 pub fn spawn_structure(
     mut commands: &mut Commands,
     level_data: &Res<LevelData>,
@@ -19,6 +20,7 @@ pub fn spawn_structure(
             RigidBody::Dynamic,
             Collider::compound(structure.colliders.clone()),
             ColliderMassProperties::Density(1.5),
+            structure.structure_behaviour,
         ))
         .with_children(|children| {
             for (pos, sprite) in structure.sprites.clone() {
@@ -28,7 +30,7 @@ pub fn spawn_structure(
                     ..default()
                 });
             }
-            for (pos, mesh, mut material) in structure.meshes.clone() {
+            for (pos, mesh, material) in structure.meshes.clone() {
                 children.spawn(MaterialMesh2dBundle {
                     mesh: meshes.add(mesh.clone()).into(),
                     material: materials.add(material.clone()),

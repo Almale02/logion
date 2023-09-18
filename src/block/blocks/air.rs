@@ -10,9 +10,7 @@ pub struct AirBlock {
 }
 impl Block for AirBlock {
     fn block_id(&self) -> Identifier {
-        Identifier {
-            id: String::from("block:{air}}"),
-        }
+        Identifier::new(Identifier::BLOCK, "game:air")
     }
     fn states(&self) -> HashMap<Identifier, BlockState> {
         unreachable!()

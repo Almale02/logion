@@ -1,3 +1,5 @@
+use crate::structure::lib::structure_behaviour::StructureBehaviour;
+
 use crate::{
     lib::identifier::Identifier,
     structure::lib::{structure::Structure, structure_helpers::StructTextureHelper},
@@ -9,7 +11,7 @@ pub struct PreStructGeneral {}
 impl PreStructGeneral {
     pub fn triangle() -> Structure {
         Structure::new(
-            Some(Identifier::new("struct:{game:triangle}".to_owned())),
+            Some(Identifier::new(Identifier::STRUCTURE, "game:triangle")),
             vec![(
                 Vec2::new(0., 0.),
                 0.,
@@ -22,11 +24,12 @@ impl PreStructGeneral {
                 ColorMaterial::from(Color::TEAL),
                 vec![Vec3::new(0., 0., 0.)],
             ),
+            StructureBehaviour::default(),
         )
     }
     pub fn ball() -> Structure {
         Structure::new(
-            Some(Identifier::new("struct:{game:ball}".to_owned())),
+            Some(Identifier::new(Identifier::STRUCTURE, "game:ball")),
             vec![(Vec2::new(0., 0.), 0., Collider::ball(16.))],
             Vec::default(),
             vec![(
@@ -34,11 +37,12 @@ impl PreStructGeneral {
                 shape::Circle::new(16.).into(),
                 ColorMaterial::from(Color::TEAL),
             )],
+            StructureBehaviour::default(),
         )
     }
     pub fn square() -> Structure {
         Structure::new(
-            Some(Identifier::new("struct:{game:square}".to_owned())),
+            Some(Identifier::new(Identifier::STRUCTURE, "game:square")),
             vec![(Vec2::ZERO, 0., Collider::cuboid(16., 16.))],
             vec![(
                 Vec3::ZERO,
@@ -49,6 +53,7 @@ impl PreStructGeneral {
                 },
             )],
             Vec::default(),
+            StructureBehaviour::default(),
         )
     }
 }

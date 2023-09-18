@@ -18,9 +18,7 @@ pub struct StoneBlock {
 
 impl Block for StoneBlock {
     fn block_id(&self) -> Identifier {
-        Identifier {
-            id: "block:{stone}".to_string(),
-        }
+        Identifier::new(Identifier::BLOCK, "game:stone")
     }
     fn states(&self) -> HashMap<Identifier, BlockState> {
         let mut out = HashMap::default();

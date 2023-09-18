@@ -3,16 +3,20 @@ use std::hash::Hash;
 use bevy::{prelude::*, sprite::Sprite, utils::default};
 use bevy_rapier2d::prelude::Collider;
 
-use crate::lib::identifier::Identifier;
+use crate::{
+    lib::identifier::Identifier,
+    structure::behaivour::data::data_types::user_defined::SBUserDataType,
+};
 
-use super::structure_helpers::StructTextureHelper;
+use super::{structure_behaviour::StructureBehaviour, structure_helpers::StructTextureHelper};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Component)]
 pub struct Structure {
     pub template_id: Option<Identifier>,
     pub colliders: Vec<(Vec2, f32, Collider)>,
     pub sprites: Vec<(Vec3, Sprite)>,
     pub meshes: Vec<(Vec3, Mesh, ColorMaterial)>,
+    pub structure_behaviour: StructureBehaviour,
 }
 impl Structure {
     pub fn new(
@@ -20,12 +24,14 @@ impl Structure {
         colliders: Vec<(Vec2, f32, Collider)>,
         sprites: Vec<(Vec3, Sprite)>,
         meshes: Vec<(Vec3, Mesh, ColorMaterial)>,
+        behaviour: StructureBehaviour,
     ) -> Self {
         Self {
             template_id,
             colliders,
             sprites,
             meshes,
+            structure_behaviour: behaviour,
         }
     }
     pub fn change_transparency(self: &mut Self, alpha: f32) {
@@ -40,7 +46,7 @@ impl Structure {
 impl Default for Structure {
     fn default() -> Self {
         Self::new(
-            Some(Identifier::new("struct:{default}".to_owned())),
+            Some(Identifier::new(Identifier::STRUCTURE, "default")),
             vec![(
                 Vec2::new(0., 0.),
                 0.,
@@ -53,6 +59,7 @@ impl Default for Structure {
                 ColorMaterial::from(Color::TEAL),
                 vec![Vec3::new(0., 0., 0.)],
             ),
+            StructureBehaviour::default(),
         )
     }
 }

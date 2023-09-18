@@ -41,9 +41,7 @@ impl DirtBlock {
 
 impl Block for DirtBlock {
     fn block_id(&self) -> Identifier {
-        Identifier {
-            id: String::from("block:{dirt}"),
-        }
+        Identifier::new(Identifier::BLOCK, "game:dirt")
     }
     fn states(&self) -> HashMap<Identifier, BlockState> {
         let mut out = HashMap::default();

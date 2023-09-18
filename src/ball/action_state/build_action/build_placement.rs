@@ -1,3 +1,4 @@
+use crate::structure::lib::structure_behaviour::StructureBehaviour;
 use crate::{
     ball::action_state::{resource::ActionStateData, state::PlayerActionState},
     lib::{input::mouse::cursor_to_global_pos, math::deg_rad::deg_to_rad},

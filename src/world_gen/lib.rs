@@ -11,13 +11,13 @@ pub struct WorldGenData {
 impl Default for WorldGenData {
     fn default() -> Self {
         let mut seed = rand::random::<u32>();
-        //seed = 3;
+        seed = 3;
 
         WorldGenData {
             seed,
             perlin: Fbm::new(seed),
             terrain_height: TerrainHeight {
-                terrain_height_smoothness: 1000.,
+                terrain_height_smoothness: 280.,
                 perlin_height_multiplier: 25.,
                 perlin_height_increment: 1.,
             },

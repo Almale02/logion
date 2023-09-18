@@ -50,9 +50,7 @@ impl Material for StoneMaterial {
 impl Default for StoneMaterial {
     fn default() -> Self {
         StoneMaterial {
-            id: Identifier {
-                id: "material:{stone}".to_string(),
-            },
+            id: Identifier::new(Identifier::MATERIAL, "game:stone"),
             color: Rgb([115; 3]),
         }
     }

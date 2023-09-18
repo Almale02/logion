@@ -46,9 +46,7 @@ impl Material for DirtMaterial {
 impl Default for DirtMaterial {
     fn default() -> Self {
         DirtMaterial {
-            id: Identifier {
-                id: "material:{dirt}".to_string(),
-            },
+            id: Identifier::new(Identifier::MATERIAL, "game:dirt"),
         }
     }
 }
