@@ -2,7 +2,7 @@ use rand::Rng;
 
 use rand::seq::SliceRandom;
 
-use bevy::prelude::Vec2;
+
 
 use image::{Rgb, Rgba, RgbaImage};
 
@@ -31,7 +31,7 @@ impl Material for IronMaterial {
             let mut free_pixels: Vec<USVec2> = Vec::default();
             for y1 in base_y..=base_y + 3 {
                 for x1 in base_x..base_x + 3 {
-                    if let Some(val) = get_coordinate(*pixel_usage, x1, y1) {
+                    if let Some(_val) = get_coordinate(*pixel_usage, x1, y1) {
                         free_pixels.push(USVec2::new(x1, y1))
                     }
                 }

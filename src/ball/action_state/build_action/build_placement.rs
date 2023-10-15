@@ -1,6 +1,7 @@
-use crate::structure::lib::structure_behaviour::StructureBehaviour;
+use crate::resource::registry::sb_data_type_registry::SBDataTypeRegistry;
+
 use crate::{
-    ball::action_state::{resource::ActionStateData, state::PlayerActionState},
+    ball::action_state::{resource::ActionStateData},
     lib::{input::mouse::cursor_to_global_pos, math::deg_rad::deg_to_rad},
     resource::level_data::LevelData,
     structure::spawn::spawn_structure,
@@ -18,6 +19,8 @@ pub fn build_placement(
     level_data: Res<LevelData>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    data_type_reg: Res<SBDataTypeRegistry>,
+    asset_server: Res<AssetServer>,
     // cursor position
     window: Query<&Window>,
     camera: Query<(&Camera, &GlobalTransform), With<Camera>>,
@@ -26,8 +29,10 @@ pub fn build_placement(
     // delay click
     mut tick_timer: Local<u8>,
 ) {
-    let structure = action_state_data.build_placement_data.build_struct.clone();
-
+    let build_data = action_state_data
+        .build_placement_data
+        .struct_build_data
+        .clone();
     if keyboard.just_pressed(KeyCode::F) {
         action_state_data.build_placement_data.build_struct_rotation =
             match action_state_data.build_placement_data.build_struct_rotation {
@@ -55,11 +60,13 @@ pub fn build_placement(
         {
             let mouse_pos = mouse_pos.unwrap();
             spawn_structure(
+                &data_type_reg,
                 &mut commands,
                 &level_data,
                 &mut meshes,
                 &mut materials,
-                structure.clone(),
+                &asset_server,
+                build_data.clone(),
                 mouse_pos.with_rotation(Quat::from_rotation_z(deg_to_rad(
                     action_state_data.build_placement_data.build_struct_rotation,
                 ))),
@@ -73,7 +80,11 @@ pub fn spawn_build_ghost(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let mut structure = action_state_data.build_placement_data.build_struct.clone();
+    let mut structure = action_state_data
+        .build_placement_data
+        .struct_build_data
+        .structure
+        .clone();
     structure.change_transparency(0.4);
 
     let id = commands

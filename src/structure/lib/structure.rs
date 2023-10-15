@@ -1,11 +1,10 @@
-use std::hash::Hash;
 
-use bevy::{prelude::*, sprite::Sprite, utils::default};
+
+use bevy::{prelude::*, sprite::Sprite};
 use bevy_rapier2d::prelude::Collider;
 
 use crate::{
     lib::identifier::Identifier,
-    structure::behaivour::data::data_types::user_defined::SBUserDataType,
 };
 
 use super::{structure_behaviour::StructureBehaviour, structure_helpers::StructTextureHelper};

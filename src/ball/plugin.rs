@@ -8,23 +8,28 @@ use super::{
             build_placement::{
                 build_placement, delete_build_ghost, move_build_ghost, spawn_build_ghost,
             },
-            build_selection::{despawn_selection_ui, handle_struct_select, spawn_selection_ui},
+            build_selection::{despawn_selection_ui, handle_select, spawn_selection_ui},
             change_state::change_build_state,
         },
         resource::ActionStateData,
         state::PlayerActionState,
     },
-    movement::system::move_camera,
+    movement::system::{move_camera, CameraFollowState},
     system::move_ball,
 };
 
-pub struct Ball;
+pub struct BallPlugin;
 
-impl Plugin for Ball {
+impl Plugin for BallPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (move_ball, move_camera, change_build_state).run_if(in_state(GameState::Game)),
+            (
+                move_ball,
+                move_camera.run_if(in_state(CameraFollowState::PlayerMain)),
+                change_build_state,
+            )
+                .run_if(in_state(GameState::Game)),
         )
         // SECTION: BUILD_PLACEMENT
         .add_systems(
@@ -43,7 +48,7 @@ impl Plugin for Ball {
         // SECTION: BUILD_SELECT
         .add_systems(
             Update,
-            (handle_struct_select).run_if(in_state(PlayerActionState::BuildSelect)),
+            (handle_select).run_if(in_state(PlayerActionState::BuildSelect)),
         )
         .add_systems(OnEnter(PlayerActionState::BuildSelect), spawn_selection_ui)
         .add_systems(

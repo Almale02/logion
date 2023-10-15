@@ -1,6 +1,4 @@
-use bevy_rapier2d::na::Point2;
-
-use noise::{BasicMulti, Fbm};
+use noise::Fbm;
 
 #[derive(Debug, Clone)]
 pub struct WorldGenData {
@@ -17,9 +15,10 @@ impl Default for WorldGenData {
             seed,
             perlin: Fbm::new(seed),
             terrain_height: TerrainHeight {
-                terrain_height_smoothness: 280.,
-                perlin_height_multiplier: 25.,
-                perlin_height_increment: 1.,
+                //terrain_height_smoothness: f64::MAX,
+                terrain_height_smoothness: 270.,
+                perlin_height_multiplier: 30.,
+                perlin_height_increment: 0.8,
             },
         }
     }

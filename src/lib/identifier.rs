@@ -5,13 +5,15 @@ pub struct Identifier {
 }
 impl Default for Identifier {
     fn default() -> Self {
-        Self::new("identifier", "default")
+        Self {
+            id: "None".to_owned(),
+        }
     }
 }
 impl Identifier {
     pub const STRUCTURE: &str = "struct";
-    pub const BUILTIN_DATA_TYPE: &str = "data_dype";
-    pub const USER_DATA_TYPE: &str = "user_data_type";
+    pub const FUNCTION: &str = "function";
+    pub const DATA_TYPE: &str = "data_dype";
     pub const BLOCK: &str = "block";
     pub const MATERIAL: &str = "material";
 
@@ -24,5 +26,19 @@ impl Identifier {
         let re = Regex::new(r":(\w+)}").unwrap();
         let caps = re.captures(&self.id).unwrap();
         return caps[1].to_owned();
+    }
+    pub fn get_body(&self) -> String {
+        let re = Regex::new(r"\{(.+)\}").unwrap();
+        let caps = re.captures(&self.id).unwrap();
+        return caps[1].to_owned();
+    }
+    pub fn new_data_type(body: &str) -> Self {
+        Self::new(Identifier::DATA_TYPE, body)
+    }
+    pub fn new_function(body: &str) -> Self {
+        Self::new(Identifier::FUNCTION, body)
+    }
+    pub fn new_structure(body: &str) -> Self {
+        Self::new(Identifier::STRUCTURE, body)
     }
 }

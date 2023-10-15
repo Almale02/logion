@@ -1,13 +1,13 @@
 use crate::{lib::identifier::Identifier, structure::behaivour::data::lib::SBDataType};
 
-use super::primitive::int::SBSignByte;
+
 
 #[derive(Debug, Clone, Default)]
 pub struct SBList(Vec<Box<dyn SBDataType>>);
 
 impl SBDataType for SBList {
     fn data_type_id(&self) -> Identifier {
-        Identifier::new(Identifier::BUILTIN_DATA_TYPE, "game:vec")
+        Identifier::new(Identifier::DATA_TYPE, "game:vec")
     }
 }
 impl PartialEq for SBList {

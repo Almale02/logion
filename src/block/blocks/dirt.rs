@@ -4,7 +4,7 @@ use crate::block::lib::*;
 use crate::lib::identifier::Identifier;
 use crate::material::lib::{MaterialGenList, MaterialType};
 use crate::material::materials::m_dirt::DirtMaterial;
-use crate::material::materials::m_iron::IronMaterial;
+
 use crate::material::materials::m_stone::StoneMaterial;
 use std::collections::HashMap;
 

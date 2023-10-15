@@ -8,9 +8,9 @@ use crate::world_gen::system::*;
 use crate::world_load::system::load_world;
 use crate::*;
 
-pub struct WorldGen;
+pub struct WorldGenPlugin;
 
-impl Plugin for WorldGen {
+impl Plugin for WorldGenPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             OnEnter(GameState::Game),

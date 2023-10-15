@@ -1,0 +1,106 @@
+use bevy::utils::{
+    hashbrown::hash_map::{OccupiedEntry, OccupiedError},
+    HashMap,
+};
+use regex::Regex;
+
+#[derive(Default, Debug, Clone)]
+pub struct NTEndpoint {
+    pub name: String,
+    pub parent: Option<Box<NTDirectory>>,
+}
+#[derive(Default, Debug, Clone)]
+pub struct NTDirectory {
+    pub name: String,
+    pub children: HashMap<String, NestingTreeNode>,
+    pub parent: Option<Box<NTDirectory>>,
+}
+
+impl NTDirectory {
+    fn root() -> NTDirectory {
+        NTDirectory {
+            name: "root".into(),
+            children: HashMap::default(),
+            parent: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum NestingTreeNode {
+    Endpoint(NTEndpoint),
+    Directory(NTDirectory),
+}
+impl NestingTreeNode {
+    pub fn create_from_path_list(&mut self, path_list: Vec<String>) {
+        let raw_self: *mut NestingTreeNode = self;
+
+        for path in path_list {
+            let parts = Regex::new(r"([^:]+)").unwrap();
+            let parts = parts.captures_iter(&path);
+
+            let mut parts: Vec<_> = parts
+                .into_iter()
+                .map(|x| x.get(1).unwrap().as_str().to_string())
+                .collect();
+            let endpoint = parts.pop().unwrap();
+
+            unsafe { raw_self.as_mut().unwrap().create_endpoint(endpoint, parts) };
+            //dbg!(endpoint, parts);
+        }
+    }
+    pub fn create_endpoint(&mut self, endpoint: String, directories: Vec<String>) {
+        unsafe {
+            let mut tree = NTDirectory::root();
+            let mut current_ref = &mut tree;
+            for path in directories {
+                current_ref.children.insert(
+                    path.clone(),
+                    NestingTreeNode::Directory(NTDirectory::default()),
+                );
+                let current_ref_raw: *mut NTDirectory = &mut *current_ref;
+                let child_ref = (&mut *current_ref_raw)
+                    .children
+                    .get_mut(&path)
+                    .unwrap()
+                    .as_directory_mut();
+
+                child_ref.name = path.clone();
+                child_ref.parent = Some(Box::new(current_ref.clone()));
+                current_ref = child_ref;
+            }
+
+            *self = NestingTreeNode::Directory(tree);
+        }
+    }
+    pub fn as_directory_mut(&mut self) -> &mut NTDirectory {
+        if let NestingTreeNode::Directory(x) = self {
+            return x;
+        } else {
+            panic!("wasnt directory");
+        }
+    }
+    pub fn clone_into_directory(&self) -> NTDirectory {
+        if let NestingTreeNode::Directory(x) = self {
+            return x.clone();
+        } else {
+            panic!("wasnt directory");
+        }
+    }
+    pub fn as_endpoint_mut(&mut self) -> &mut NTEndpoint {
+        if let NestingTreeNode::Endpoint(x) = self {
+            return x;
+        } else {
+            panic!("wasnt endpoint");
+        }
+    }
+}
+impl Default for NestingTreeNode {
+    fn default() -> Self {
+        Self::Directory(NTDirectory {
+            name: "default".into(),
+            parent: None,
+            children: HashMap::default(),
+        })
+    }
+}

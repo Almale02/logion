@@ -1,110 +1,63 @@
 use inflector::Inflector;
 
-use bevy::{ecs::component::Tick, input::mouse::MouseButtonInput, prelude::*};
+use bevy::{ecs::component::Tick, prelude::*};
 
 use crate::{
     ball::action_state::{resource::ActionStateData, state::PlayerActionState},
-    resource::registry::structures::StructureRegistry,
+    lib::{identifier::Identifier, nesting_tree::nesting_tree::NTPath},
+    resource::{
+        nestable_menu::NestableMenuHolder,
+        registry::{sb_data_type_registry::SBDataTypeRegistry, structures::StructureRegistry},
+    },
+    ui::nestable_menu::lib::nestable_menu::NestableMenu,
 };
 
 use super::lib::SelectButtonData;
 
-pub fn despawn_selection_ui(mut commands: Commands, action_state_data: Res<ActionStateData>) {
-    commands
-        .get_entity(action_state_data.build_selection_data.selection_ui)
-        .unwrap()
-        .despawn_recursive();
-}
-pub fn handle_struct_select(
-    q_button: Query<(&Interaction, &SelectButtonData), Changed<Interaction>>,
-    mut action_state_data: ResMut<ActionStateData>,
-    mut next_action_state: ResMut<NextState<PlayerActionState>>,
+pub fn despawn_selection_ui(
+    mut commands: Commands,
+    mut nestable_menu_holder: NonSendMut<NestableMenuHolder>,
 ) {
-    for (interaction, data) in &q_button {
-        match interaction {
-            Interaction::None => (),
-            Interaction::Hovered => (),
-            Interaction::Pressed => {
-                action_state_data.build_placement_data.build_struct = data.structure.clone();
-                next_action_state.set(PlayerActionState::BuildPlacement);
-                next_action_state.set_last_changed(Tick::new(0));
-                action_state_data.build_placement_data.click_delay = true;
-            }
-        }
-    }
+    nestable_menu_holder.hide(&mut commands)
 }
 pub fn spawn_selection_ui(
     mut commands: Commands,
-    mut action_state_data: ResMut<ActionStateData>,
-    struct_registry: Res<StructureRegistry>,
-    asset_server: ResMut<AssetServer>,
+    mut nestable_menu_holder: NonSendMut<NestableMenuHolder>,
+    data_type_registry: Res<SBDataTypeRegistry>,
+    asset_server: Res<AssetServer>,
 ) {
-    let id = commands
-        .spawn(NodeBundle {
-            style: Style {
-                width: Val::Percent(100.),
-                height: Val::Percent(100.),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                ..default()
-            },
-            ..default()
-        })
-        .id();
-    commands.get_entity(id).unwrap().with_children(|spawn| {
-        spawn
-            .spawn(NodeBundle {
-                style: Style {
-                    width: Val::Percent(20.),
-                    height: Val::Percent(20.),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    column_gap: Val::Px(5.),
-                    flex_wrap: FlexWrap::Wrap,
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::rgba_u8(40, 40, 40, 100)),
-                ..default()
-            })
-            .with_children(|spawn| {
-                for structure in struct_registry.0.clone() {
-                    spawn
-                        .spawn((
-                            ButtonBundle {
-                                style: Style {
-                                    width: Val::Px(70.),
-                                    height: Val::Px(40.),
-                                    align_items: AlignItems::Center,
-                                    justify_content: JustifyContent::Center,
-                                    ..default()
-                                },
-                                background_color: BackgroundColor(Color::rgba_u8(
-                                    100, 100, 100, 180,
-                                )),
-                                ..default()
-                            },
-                            SelectButtonData {
-                                structure: structure.clone(),
-                            },
-                        ))
-                        .with_children(|spawn| {
-                            spawn.spawn(
-                                TextBundle::from_section(
-                                    structure.template_id.unwrap().get_name().to_title_case(),
-                                    TextStyle {
-                                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                                        font_size: 18.,
-                                        color: Color::BLACK,
-                                    },
-                                )
-                                .with_text_alignment(TextAlignment::Center)
-                                .with_style(Style { ..default() }),
-                            );
-                        });
-                }
-            });
-    });
-    action_state_data.build_selection_data.selection_ui = id;
+    let mut nestable_menu = NestableMenu::default();
+
+    nestable_menu.nesting_tree = StructureRegistry::init(&data_type_registry).get_nesting_tree();
+
+    nestable_menu_holder.add(nestable_menu, &mut commands, &asset_server);
+}
+pub fn handle_select(
+    nestable_menu_holder: NonSend<NestableMenuHolder>,
+    struct_registry: Res<StructureRegistry>,
+    key_code: Res<Input<KeyCode>>,
+    mut action_data: ResMut<ActionStateData>,
+    mut next_player_action_state: ResMut<NextState<PlayerActionState>>,
+) {
+    if key_code.just_pressed(KeyCode::Return) {
+        let menu = nestable_menu_holder.nestable_menu.as_ref().unwrap();
+        if !menu.render_buffer[menu.selected_index]
+            .item_type
+            .is_endpoint()
+        {
+            return;
+        }
+        let select_path = NTPath::from_parts(
+            menu.nesting_tree.pointer.clone(),
+            menu.render_buffer[menu.selected_index].nesting_id.clone(),
+        );
+        action_data.build_placement_data.struct_build_data = struct_registry
+            .0
+            .get(&Identifier::new_structure(&select_path.into_string()))
+            .unwrap()
+            .clone();
+        next_player_action_state.set(PlayerActionState::BuildPlacement);
+    }
 }
 
 #[derive(Clone, Debug)]

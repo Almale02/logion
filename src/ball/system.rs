@@ -1,84 +1,42 @@
-use bevy::input::mouse::*;
 use bevy::prelude::*;
 
-use bevy_rapier2d::{
-    na::Vector1,
-    prelude::*,
-    rapier::prelude::{ImpulseJointSet, Vector},
-};
+use bevy_rapier2d::prelude::*;
 
 use crate::{
-    ball::component::*,
-    lib::math::{deg_rad::deg_to_rad, vec1::Vec1},
-    resource::level_data::LevelData,
+    ball::component::*, resource::level_data::LevelData,
+    structure::behaivour::logic::lib::sb_script::SBScript,
 };
-
 pub fn move_ball(
-    mut q_movement: Query<
-        (
-            &mut Vec1,
-            &mut KinematicCharacterController,
-            &KinematicCharacterControllerOutput,
-            &mut Velocity,
-        ),
-        With<Ball>,
-    >,
-    mut set: ParamSet<(
-        Query<&mut Transform, With<Camera2d>>,
-        Query<&mut Transform, With<Ball>>,
-    )>,
-    keyboard: Res<Input<KeyCode>>,
-    time: Res<Time>,
-    mut should_jump_on_fall: Local<bool>,
+    mut impulse: Query<&mut ExternalImpulse, With<Ball>>,
+    mut scripts: Query<&mut SBScript>,
+    input: Res<Input<KeyCode>>,
+    mut vel: Query<&mut Velocity, With<Ball>>,
+    mut _transform: Query<&mut Transform, With<Ball>>,
+    //
+    scan: Res<Input<ScanCode>>,
+    mut evr_char: EventReader<ReceivedCharacter>,
 ) {
-    let move_speed = 3.5;
-    let fall_speed = 5.5;
-
-    let e = Entity::PLACEHOLDER;
-
-    for (mut y_vel, mut controller, controller_info, mut velocity) in q_movement.iter_mut() {
-        controller.slide = true;
-        controller.min_slope_slide_angle = deg_to_rad(69);
-        controller.max_slope_climb_angle = deg_to_rad(55);
-        controller.offset = CharacterLength::Relative(0.05);
-
-        let mut x_vel = 0.;
-        {
-            if keyboard.pressed(KeyCode::Right) {
-                x_vel = move_speed * time.delta_seconds() * 100.
-            }
-            if keyboard.pressed(KeyCode::Left) {
-                x_vel = -move_speed * time.delta_seconds() * 100.
-            }
+    let horizontal_speed = 40.;
+    if input.pressed(KeyCode::D) {
+        impulse.single_mut().impulse = Vec2::X * horizontal_speed
+    }
+    if input.pressed(KeyCode::A) {
+        impulse.single_mut().impulse = Vec2::X * -horizontal_speed
+    }
+    if input.just_pressed(KeyCode::Space) {
+        for mut script in scripts.iter_mut() {
+            script.add_to_queue(69)
         }
-        {
-            if keyboard.just_pressed(KeyCode::Space) {
-                if controller_info.grounded {
-                    **y_vel += 18. * (fall_speed / 2.5)
-                } else {
-                    *should_jump_on_fall = true;
-                }
-            }
-            if controller_info.grounded && *should_jump_on_fall {
-                **y_vel += 18. * (fall_speed / 2.5);
-                *should_jump_on_fall = false;
-            }
-        }
+        impulse.single_mut().impulse = Vec2::Y * 2000.
+    }
+    let mut _vel = vel.single_mut();
 
-        // INFO: gravity
-        **y_vel -= fall_speed * time.delta_seconds() * 50.;
-        // INFO: ceil gravity
-        if **y_vel < -fall_speed {
-            **y_vel = -fall_speed
-        }
-
-        controller.translation = Some(Vect {
-            x: x_vel,
-            y: **y_vel,
-        });
-
-        set.p1().single_mut().rotate_z(x_vel);
-        velocity.angvel = x_vel * 100.;
+    for x in scan.get_just_pressed() {
+        dbg!(x.0);
+        if scan.pressed(ScanCode(5)) {}
+    }
+    for ev in evr_char.iter() {
+        dbg!(ev.char);
     }
 }
 
@@ -87,6 +45,11 @@ pub fn spawn_ball(
     asset_server: Res<AssetServer>,
     level_data: Res<LevelData>,
 ) {
+    let _text_style = TextStyle {
+        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+        font_size: 20.0,
+        color: Color::WHITE,
+    };
     commands.spawn((
         Ball,
         SpriteBundle {
@@ -94,22 +57,30 @@ pub fn spawn_ball(
             transform: Transform::from_scale(Vec3 {
                 x: 2.15,
                 y: 2.15,
-                z: 0.,
+                z: 1.,
             })
             .with_translation(Vec3 {
                 x: 0.,
                 y: (level_data.terrain_height[0] as f32 + 5.) * level_data.grid_unit as f32,
-                z: 0.,
+                z: -1.,
             }),
             ..default()
         },
-        //Collider::ball(16. / 3. + 3.27),
+        Damping {
+            linear_damping: 0.5,
+            angular_damping: 0.,
+        },
+        Friction {
+            coefficient: 1.,
+            combine_rule: CoefficientCombineRule::Min,
+        },
+        GravityScale(2.5),
         Collider::ball(16. / 2.15),
+        //
         ColliderMassProperties::Density(1.2),
-        RigidBody::KinematicVelocityBased,
-        KinematicCharacterController::default(),
-        KinematicCharacterControllerOutput::default(),
+        RigidBody::Dynamic,
         Velocity::default(),
-        Vec1::default(),
+        ExternalForce::default(),
+        ExternalImpulse::default(),
     ));
 }

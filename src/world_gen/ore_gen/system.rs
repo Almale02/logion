@@ -14,7 +14,7 @@ pub fn gen_ore_patch_centers(mut level_data: ResMut<LevelData>) {
     let mut patch_positions: Vec<USVec2> = level_data.terrain_map.keys().cloned().collect();
 
     patch_positions.shuffle(&mut rand::thread_rng());
-    let patch_positions = &mut patch_positions[0..20].to_vec();
+    let patch_positions = &mut patch_positions[0..200].to_vec();
     {
         //*patch_positions = vec![USVec2::new(6, level_data.change_y_smallest(9))];
 

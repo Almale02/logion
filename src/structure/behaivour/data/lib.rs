@@ -1,11 +1,14 @@
-use std::collections::HashMap;
 
+
+use bevy::prelude::World;
 use dyn_clone::DynClone;
 use mopa::Any;
 
-use crate::lib::identifier::Identifier;
+use crate::{
+    lib::identifier::Identifier, resource::registry::sb_data_type_registry::SBDataTypeRegistry,
+};
 
-use super::data_types::user_defined::SBUserDataType;
+
 
 pub trait SBDataType: Any + DynClone + Send + Sync {
     fn data_type_id(&self) -> Identifier;
@@ -19,7 +22,24 @@ impl std::fmt::Debug for dyn SBDataType {
         write!(f, "temp")
     }
 }
-pub fn cast_sb_data_type<T: SBDataType>(data: T) -> Box<dyn SBDataType> {
-    let b = Box::new(data);
-    b
+impl From<(&World, Identifier)> for Box<dyn SBDataType> {
+    fn from(value: (&World, Identifier)) -> Self {
+        let registry = value.0.get_resource::<SBDataTypeRegistry>().unwrap();
+
+        registry.0.get(&value.1).unwrap().default.clone()
+    }
+}
+impl From<(&SBDataTypeRegistry, Identifier)> for Box<dyn SBDataType> {
+    fn from(value: (&SBDataTypeRegistry, Identifier)) -> Self {
+        value.0 .0.get(&value.1).unwrap().default.clone()
+    }
+}
+pub trait IntoBoxSBDataType {
+    fn boxed(self) -> Box<dyn SBDataType>;
+}
+
+impl<T: SBDataType> IntoBoxSBDataType for T {
+    fn boxed(self) -> Box<dyn SBDataType> {
+        Box::new(self) as Box<dyn SBDataType>
+    }
 }

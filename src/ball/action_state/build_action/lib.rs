@@ -1,11 +1,11 @@
 use bevy::prelude::*;
-use ordered_float::OrderedFloat;
 
-use crate::structure::lib::structure::Structure;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+use crate::structure::lib::{structure_spawn_data::StructureSpawnData};
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct BuildPlacementData {
-    pub build_struct: Structure,
+    pub struct_build_data: StructureSpawnData,
     pub build_ghost_id: Entity,
     pub build_struct_rotation: u16,
     pub click_delay: bool,
@@ -13,7 +13,7 @@ pub struct BuildPlacementData {
 impl Default for BuildPlacementData {
     fn default() -> Self {
         Self {
-            build_struct: Structure::default(),
+            struct_build_data: StructureSpawnData::default(),
             build_ghost_id: Entity::PLACEHOLDER,
             build_struct_rotation: 0,
             click_delay: false,
@@ -33,5 +33,5 @@ impl Default for BuildSelectionData {
 }
 #[derive(Debug, Clone, Component)]
 pub struct SelectButtonData {
-    pub structure: Structure,
+    pub spawn_data: StructureSpawnData,
 }

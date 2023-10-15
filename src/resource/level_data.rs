@@ -1,4 +1,4 @@
-use noise::Fbm;
+
 
 use crate::material::lib::MaterialType;
 use crate::material::materials::m_dirt::DirtMaterial;
@@ -8,7 +8,7 @@ use crate::world_gen::ore_gen::lib::OrePatchData;
 
 use std::collections::HashMap;
 
-use ordered_float::OrderedFloat;
+
 
 use crate::block::{block_type::BlockType, blocks::air::AirBlock};
 
@@ -20,15 +20,15 @@ use bevy::prelude::*;
 pub struct LevelData {
     pub grid_unit: u8,
     pub world_size: USVec2,
-    pub block_gird: [[Entity; 200]; 90],
+    pub block_gird: [[Entity; 200 * 3]; 90],
     pub gen_grid: Vec<Vec<GenTileGridData>>,
     pub terrain_map: HashMap<USVec2, bool>,
-    pub terrain_height: [usize; 200],
+    pub terrain_height: [usize; 200 * 3],
     pub generation_data: WorldGenData,
 }
 impl Default for LevelData {
     fn default() -> Self {
-        const x: usize = 200;
+        const x: usize = 200 * 3;
         const y: usize = 90;
         LevelData {
             grid_unit: 16 * 2,

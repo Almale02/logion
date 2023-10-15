@@ -1,4 +1,4 @@
-use bevy::prelude::default;
+
 use ordered_float::OrderedFloat;
 
 use crate::lib::math::usvec2::USVec2;

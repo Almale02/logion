@@ -3,7 +3,7 @@ use bevy::utils::HashMap;
 use crate::{
     lib::identifier::Identifier,
     resource::registry::sb_data_type_registry::SBDataTypeInfo,
-    structure::behaivour::data::lib::{cast_sb_data_type, SBDataType},
+    structure::behaivour::data::lib::{IntoBoxSBDataType, SBDataType},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -11,24 +11,21 @@ pub struct SBString(pub String);
 impl SBString {
     pub fn register_type(registry_map: &mut HashMap<Identifier, SBDataTypeInfo>) {
         registry_map.insert(
-            Identifier::new(Identifier::BUILTIN_DATA_TYPE, "game:string"),
-            SBDataTypeInfo::from(String::from("string")),
+            Identifier::new(Identifier::DATA_TYPE, "game:string"),
+            SBDataTypeInfo::new(None, Self("default".to_owned()).boxed()),
         );
     }
 }
 impl SBDataType for SBString {
     fn data_type_id(&self) -> Identifier {
-        Identifier::new(Identifier::BUILTIN_DATA_TYPE, "game:string")
+        Identifier::new(Identifier::DATA_TYPE, "game:string")
     }
-    /*fn as_trait_object(&self) -> Box<dyn SBDataType> {
-        Box::new(self.clone())
-    }*/
 }
 fn a() {
-    let mut data: Box<dyn SBDataType> = cast_sb_data_type(SBString("a".to_owned()));
+    let mut data: Box<dyn SBDataType> = SBString("a".to_owned()).boxed();
     let str_data = data.downcast_ref::<SBString>().unwrap();
 
     let string = &str_data.0;
 
-    data = cast_sb_data_type(SBString(string.repeat(5)))
+    data = SBString(string.repeat(5)).boxed()
 }

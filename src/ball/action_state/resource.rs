@@ -1,10 +1,8 @@
 use bevy::prelude::*;
 
-use crate::structure::lib::structure::Structure;
-
 use super::build_action::lib::{BuildPlacementData, BuildSelectionData};
 
-#[derive(Debug, Clone, PartialEq, Eq, Resource)]
+#[derive(Debug, Clone, PartialEq, Resource)]
 pub struct ActionStateData {
     pub build_placement_data: BuildPlacementData,
     pub build_selection_data: BuildSelectionData,

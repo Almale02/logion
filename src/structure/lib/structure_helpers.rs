@@ -1,11 +1,9 @@
 use bevy::{
     prelude::*,
-    reflect::{TypePath, TypeUuid},
     render::{
         mesh::Indices,
-        render_resource::{AsBindGroup, PrimitiveTopology, ShaderRef},
+        render_resource::{PrimitiveTopology},
     },
-    sprite::Material2d,
 };
 
 pub struct StructTextureHelper {}

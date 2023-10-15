@@ -1,27 +1,58 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
-use bevy_rapier2d::prelude::{Collider, ColliderMassProperties, RigidBody};
+use bevy_rapier2d::prelude::{
+    Collider, ColliderMassProperties, ExternalForce, ExternalImpulse, RigidBody, Velocity,
+};
 
-use crate::resource::level_data::LevelData;
+use crate::{
+    resource::{level_data::LevelData, registry::sb_data_type_registry::SBDataTypeRegistry},
+};
 
-use super::lib::structure::Structure;
-use crate::structure::lib::structure_behaviour::StructureBehaviour;
+use super::{
+    behaivour::{
+        hardware::hardwares::text_display::SBHTextDisplay,
+    },
+    lib::{structure_spawn_data::StructureSpawnData},
+};
 pub fn spawn_structure(
-    mut commands: &mut Commands,
-    level_data: &Res<LevelData>,
-    mut meshes: &mut ResMut<Assets<Mesh>>,
-    mut materials: &mut ResMut<Assets<ColorMaterial>>,
-    structure: Structure,
+    _data_type_reg: &SBDataTypeRegistry,
+    commands: &mut Commands,
+    _level_data: &Res<LevelData>,
+    meshes: &mut ResMut<Assets<Mesh>>,
+    materials: &mut ResMut<Assets<ColorMaterial>>,
+    asset_server: &Res<AssetServer>,
+    build_data: StructureSpawnData,
     position: Transform,
 ) {
+    let structure = build_data.structure;
+    let text_style = TextStyle {
+        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+        font_size: 20.0,
+        color: Color::WHITE,
+    };
     commands
         .spawn((
             TransformBundle::from_transform(position),
             VisibilityBundle::default(),
             RigidBody::Dynamic,
             Collider::compound(structure.colliders.clone()),
-            ColliderMassProperties::Density(1.5),
+            ColliderMassProperties::Density(2.),
             structure.structure_behaviour,
+            Velocity::default(),
+            Spawned,
+            build_data.script,
+            //
+            SBHTextDisplay {
+                text: "3443434".into(),
+            },
         ))
+        .insert(ExternalForce {
+            force: Vec2::new(0., 0.),
+            torque: 0.,
+        })
+        .insert(ExternalImpulse {
+            impulse: Vec2::new(0., 0.),
+            torque_impulse: 0.,
+        })
         .with_children(|children| {
             for (pos, sprite) in structure.sprites.clone() {
                 children.spawn(SpriteBundle {
@@ -38,5 +69,15 @@ pub fn spawn_structure(
                     ..default()
                 });
             }
+            children.spawn((
+                Text2dBundle {
+                    text: Text::from_section("111", text_style),
+                    transform: Transform::from_xyz(0., 0., 10.).with_scale(Vec3::new(1., 1., 1.)),
+                    ..default()
+                },
+                ZIndex::Global(10),
+            ));
         });
 }
+#[derive(Component)]
+pub struct Spawned;

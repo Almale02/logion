@@ -1,6 +1,6 @@
 #![allow(unused_mut)]
 
-use noise::{Fbm, NoiseFn};
+use noise::{NoiseFn};
 
 use bevy::prelude::*;
 use bevy::render::render_resource::{Extent3d, TextureDimension, TextureFormat};
@@ -11,8 +11,8 @@ use crate::block::block_type::BlockConvertible;
 
 use crate::block::blocks::air::AirBlock;
 use crate::block::blocks::dirt::DirtBlock;
-use crate::block::blocks::stone::StoneBlock;
-use crate::block::{block_type::BlockType, blocks::*, lib::*};
+
+use crate::block::{block_type::BlockType, lib::*};
 use crate::lib::math::usvec2::USVec2;
 
 use crate::resource::level_data::LevelData;

@@ -1,5 +1,8 @@
+use crate::resource::registry::sb_data_type_registry::SBDataTypeRegistry;
+use crate::structure::behaivour::logic::lib::sb_script::SBScript;
 use crate::structure::lib::structure_behaviour::StructureBehaviour;
 
+use crate::structure::lib::structure_spawn_data::StructureSpawnData;
 use crate::{
     lib::identifier::Identifier,
     structure::lib::{structure::Structure, structure_helpers::StructTextureHelper},
@@ -9,8 +12,8 @@ use bevy_rapier2d::prelude::*;
 
 pub struct PreStructGeneral {}
 impl PreStructGeneral {
-    pub fn triangle() -> Structure {
-        Structure::new(
+    pub fn triangle(data_type_registry: &SBDataTypeRegistry) -> StructureSpawnData {
+        let structure = Structure::new(
             Some(Identifier::new(Identifier::STRUCTURE, "game:triangle")),
             vec![(
                 Vec2::new(0., 0.),
@@ -25,10 +28,14 @@ impl PreStructGeneral {
                 vec![Vec3::new(0., 0., 0.)],
             ),
             StructureBehaviour::default(),
-        )
+        );
+        StructureSpawnData {
+            structure,
+            script: SBScript::new_random_text(data_type_registry),
+        }
     }
-    pub fn ball() -> Structure {
-        Structure::new(
+    pub fn ball(data_type_registry: &SBDataTypeRegistry) -> StructureSpawnData {
+        let structure = Structure::new(
             Some(Identifier::new(Identifier::STRUCTURE, "game:ball")),
             vec![(Vec2::new(0., 0.), 0., Collider::ball(16.))],
             Vec::default(),
@@ -38,10 +45,14 @@ impl PreStructGeneral {
                 ColorMaterial::from(Color::TEAL),
             )],
             StructureBehaviour::default(),
-        )
+        );
+        StructureSpawnData {
+            structure,
+            script: SBScript::new_random_text(data_type_registry),
+        }
     }
-    pub fn square() -> Structure {
-        Structure::new(
+    pub fn square(data_type_registry: &SBDataTypeRegistry) -> StructureSpawnData {
+        let structure = Structure::new(
             Some(Identifier::new(Identifier::STRUCTURE, "game:square")),
             vec![(Vec2::ZERO, 0., Collider::cuboid(16., 16.))],
             vec![(
@@ -54,6 +65,10 @@ impl PreStructGeneral {
             )],
             Vec::default(),
             StructureBehaviour::default(),
-        )
+        );
+        StructureSpawnData {
+            structure,
+            script: SBScript::new_random_text(data_type_registry),
+        }
     }
 }

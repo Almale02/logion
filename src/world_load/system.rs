@@ -50,6 +50,10 @@ pub fn load_world(
                 },
                 RigidBody::Fixed,
                 Collider::cuboid(8., 8.),
+                Friction {
+                    coefficient: f32::MAX,
+                    combine_rule: CoefficientCombineRule::Min,
+                },
             ));
 
             match block {
